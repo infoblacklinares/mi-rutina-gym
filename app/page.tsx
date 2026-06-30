@@ -3,15 +3,6 @@ import { ROUTINE } from "@/lib/routines";
 import { createClient } from "@/lib/supabase/server";
 import BottomNav from "@/components/BottomNav";
 
-const MUSCLE_COLORS: Record<string, string> = {
-  "pecho-triceps": "bg-rose-500/15 text-rose-400",
-  "espalda-biceps": "bg-blue-500/15 text-blue-400",
-  piernas: "bg-orange-500/15 text-orange-400",
-  "hombros-trapecios": "bg-purple-500/15 text-purple-400",
-  "pecho-core": "bg-pink-500/15 text-pink-400",
-  "full-body": "bg-emerald-500/15 text-emerald-400",
-};
-
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -25,77 +16,111 @@ export default async function DashboardPage() {
   const lastByDay = new Map<number, string>();
   const completedDays = new Set<number>();
   for (const s of sessions ?? []) {
-    if (!lastByDay.has(s.day_number)) {
-      lastByDay.set(s.day_number, s.started_at);
-    }
+    if (!lastByDay.has(s.day_number)) lastByDay.set(s.day_number, s.started_at);
     if (s.completed_at) completedDays.add(s.day_number);
   }
 
   const totalSessions = sessions?.filter((s) => s.completed_at).length ?? 0;
+  const username = user?.email?.split("@")[0] ?? "Atleta";
 
   return (
     <>
-      <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-6 pb-4">
+      <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-neutral-500 text-sm">Bienvenido 👋</p>
-            <h1 className="text-2xl font-bold">{user?.email?.split("@")[0]}</h1>
+            <p className="text-neutral-500 text-sm mb-1">Bienvenido de nuevo</p>
+            <h1 className="text-3xl font-black capitalize">{username} 👋</h1>
           </div>
-          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-lg">
-            {user?.email?.[0]?.toUpperCase()}
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="rounded-2xl bg-[#161616] border border-[#252525] p-4">
-            <p className="text-neutral-500 text-xs mb-1">Sesiones totales</p>
-            <p className="text-3xl font-bold text-emerald-400">{totalSessions}</p>
-          </div>
-          <div className="rounded-2xl bg-[#161616] border border-[#252525] p-4">
-            <p className="text-neutral-500 text-xs mb-1">Días entrenados</p>
-            <p className="text-3xl font-bold text-emerald-400">{completedDays.size}<span className="text-neutral-600 text-lg">/6</span></p>
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-black font-black text-xl">
+            {username[0].toUpperCase()}
           </div>
         </div>
 
-        {/* Routine Days */}
-        <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-widest mb-3">
-          Rutina semanal
-        </h2>
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="rounded-2xl bg-[#161616] border border-[#222] p-3 text-center">
+            <p className="text-2xl font-black text-emerald-400">{totalSessions}</p>
+            <p className="text-[11px] text-neutral-500 mt-0.5">Sesiones</p>
+          </div>
+          <div className="rounded-2xl bg-[#161616] border border-[#222] p-3 text-center">
+            <p className="text-2xl font-black text-emerald-400">{completedDays.size}<span className="text-neutral-600 text-sm">/6</span></p>
+            <p className="text-[11px] text-neutral-500 mt-0.5">Días</p>
+          </div>
+          <div className="rounded-2xl bg-[#161616] border border-[#222] p-3 text-center">
+            <p className="text-2xl font-black text-emerald-400">
+              {Math.round((completedDays.size / 6) * 100)}<span className="text-neutral-600 text-sm">%</span>
+            </p>
+            <p className="text-[11px] text-neutral-500 mt-0.5">Progreso</p>
+          </div>
+        </div>
 
-        <div className="space-y-3">
+        {/* Section title */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold">Tu rutina semanal</h2>
+          <span className="text-xs text-neutral-500">{ROUTINE.length} días</span>
+        </div>
+
+        {/* Day cards */}
+        <div className="space-y-3 pb-6">
           {ROUTINE.map((day) => {
             const last = lastByDay.get(day.day);
             const done = completedDays.has(day.day);
-            const colorClass = MUSCLE_COLORS[day.muscleGroup] ?? "bg-neutral-500/15 text-neutral-400";
 
             return (
               <Link
                 key={day.day}
                 href={`/day/${day.day}`}
-                className="flex items-center gap-4 rounded-2xl bg-[#161616] border border-[#252525] p-4 active:scale-[0.98] transition-transform"
+                className="group relative flex items-center overflow-hidden rounded-3xl bg-[#161616] border border-[#222] p-4 active:scale-[0.97] transition-all duration-150"
               >
-                <div className="w-12 h-12 rounded-xl bg-[#1f1f1f] flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl font-black text-emerald-400">{day.day}</span>
+                {/* Color accent bar */}
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-1 rounded-l-3xl"
+                  style={{ background: day.color }}
+                />
+
+                {/* Day number bubble */}
+                <div
+                  className="w-14 h-14 rounded-2xl flex flex-col items-center justify-center flex-shrink-0 ml-2 mr-4"
+                  style={{ background: `${day.color}20` }}
+                >
+                  <span className="text-2xl">{day.emoji}</span>
+                  <span className="text-[10px] font-bold mt-0.5" style={{ color: day.color }}>
+                    DÍA {day.day}
+                  </span>
                 </div>
+
+                {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-sm">{day.title}</p>
-                    {done && <span className="text-emerald-400 text-xs">✓</span>}
-                  </div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colorClass}`}>
-                      {day.exercises.length} ejercicios
-                    </span>
-                    {last && (
-                      <span className="text-xs text-neutral-600">
-                        {new Date(last).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" })}
+                    <h3 className="font-bold text-base">{day.title}</h3>
+                    {done && (
+                      <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-semibold">
+                        ✓
                       </span>
                     )}
                   </div>
+                  <p className="text-xs text-neutral-500 mt-0.5">{day.muscleGroup}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[11px] text-neutral-600">
+                      {day.exercises.length} ejercicios
+                    </span>
+                    {day.extra && (
+                      <>
+                        <span className="text-neutral-700">·</span>
+                        <span className="text-[11px] text-orange-500">{day.extra}</span>
+                      </>
+                    )}
+                  </div>
+                  {last && (
+                    <p className="text-[11px] text-neutral-600 mt-1">
+                      Última vez: {new Date(last).toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })}
+                    </p>
+                  )}
                 </div>
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-neutral-600 flex-shrink-0">
+
+                {/* Arrow */}
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-neutral-700 group-hover:text-neutral-400 transition-colors flex-shrink-0">
                   <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
                 </svg>
               </Link>
