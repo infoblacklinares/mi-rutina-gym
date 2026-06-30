@@ -180,7 +180,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
       <div className="h-1 bg-[#222] rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${(totalDone / totalSets) * 100}%`, background: day.color }}
+          style={{ width: `${(totalDone / totalSets) * 100}%`, background: `#D4FF00` }}
         />
       </div>
 
@@ -215,7 +215,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
         {/* Exercise info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full text-black" style={{ background: day.color }}>
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full text-black" style={{ background: `#D4FF00` }}>
               {exerciseIndex + 1} / {day.exercises.length}
             </span>
             {exerciseDone && (
@@ -289,7 +289,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
                   <button
                     onClick={() => completeSet(i)}
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-black font-bold"
-                    style={{ background: day.color }}
+                    style={{ background: `#D4FF00` }}
                   >
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                       <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
@@ -327,7 +327,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
           <button
             onClick={() => { stopRest(); setExerciseIndex((i) => i + 1); }}
             className="flex-1 rounded-2xl font-bold py-4 text-sm text-black"
-            style={{ background: day.color }}
+            style={{ background: `#D4FF00` }}
           >
             Siguiente →
           </button>
