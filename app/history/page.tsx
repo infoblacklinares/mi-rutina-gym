@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import TopBar from "@/components/TopBar";
+import BottomNav from "@/components/BottomNav";
 import HistoryView from "@/components/HistoryView";
 
 export default async function HistoryPage() {
@@ -18,10 +18,14 @@ export default async function HistoryPage() {
 
   return (
     <>
-      <TopBar title="Historial" />
-      <main className="flex-1 max-w-2xl w-full mx-auto p-4">
+      <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-6 pb-4">
+        <div className="mb-6">
+          <p className="text-neutral-500 text-sm">Tu progreso</p>
+          <h1 className="text-2xl font-bold">Historial</h1>
+        </div>
         <HistoryView sessions={sessions ?? []} logs={logs ?? []} />
       </main>
+      <BottomNav />
     </>
   );
 }

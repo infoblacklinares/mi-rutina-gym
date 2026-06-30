@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getDay } from "@/lib/routines";
 import { createClient } from "@/lib/supabase/server";
-import TopBar from "@/components/TopBar";
 import WorkoutRunner from "@/components/WorkoutRunner";
 
 export default async function DayPage({
@@ -12,25 +11,16 @@ export default async function DayPage({
   const { dayNumber } = await params;
   const day = getDay(Number(dayNumber));
 
-  if (!day) {
-    notFound();
-  }
+  if (!day) notFound();
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    notFound();
-  }
+  if (!user) notFound();
 
   return (
-    <>
-      <TopBar title={`Día ${day.day}`} />
-      <main className="flex-1 max-w-2xl w-full mx-auto p-4">
-        <WorkoutRunner day={day} userId={user.id} />
-      </main>
-    </>
+    <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-4 pb-6">
+      <WorkoutRunner day={day} userId={user.id} />
+    </main>
   );
 }
