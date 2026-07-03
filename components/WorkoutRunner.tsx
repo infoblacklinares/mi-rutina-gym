@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import type { RoutineDay } from "@/lib/routines";
+import type { Exercise, RoutineDay } from "@/lib/routines";
 import type { LastSetData } from "@/app/day/[dayNumber]/page";
 
 export default function WorkoutRunner({
@@ -20,6 +21,7 @@ export default function WorkoutRunner({
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [preview, setPreview] = useState<Exercise | null>(null);
   const startedAt = useRef(Date.now());
 
   function lastWeightOf(exerciseName: string): number | null {
@@ -151,13 +153,23 @@ export default function WorkoutRunner({
       <div className="rounded-3xl bg-white card-shadow p-2">
         {day.exercises.map((ex, i) => (
           <div key={ex.name} className="flex items-center gap-3 p-3">
-            <div className="w-9 h-9 rounded-xl bg-[#eef3f8] flex items-center justify-center text-sm font-bold text-[#0b3557] flex-shrink-0">
-              {i + 1}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm text-[#0c1c2c]">{ex.name}</p>
-              <p className="text-xs text-[#8ba0b5]">{ex.sets} × {ex.reps}</p>
-            </div>
+            <button
+              onClick={() => setPreview(ex)}
+              className="flex items-center gap-3 flex-1 min-w-0 text-left active:opacity-60 transition-opacity"
+            >
+              <div className="w-9 h-9 rounded-xl bg-[#eef3f8] flex items-center justify-center text-sm font-bold text-[#0b3557] flex-shrink-0">
+                {i + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-[#0c1c2c] flex items-center gap-1.5">
+                  {ex.name}
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-[#9db0c3] flex-shrink-0">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                  </svg>
+                </p>
+                <p className="text-xs text-[#8ba0b5]">{ex.sets} × {ex.reps}</p>
+              </div>
+            </button>
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <input
                 type="number"
@@ -195,6 +207,51 @@ export default function WorkoutRunner({
       >
         {saving ? "Guardando..." : "Guardar entrenamiento"}
       </button>
+
+      {/* ─── Popup del ejercicio ─── */}
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setPreview(null)}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-3xl overflow-hidden card-shadow"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full aspect-[4/3] bg-[#dbe5ef]">
+              <Image
+                src={preview.image}
+                alt={preview.name}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              <button
+                onClick={() => setPreview(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </button>
+            </div>
+            <div className="p-5">
+              <h3 className="font-bold text-lg text-[#0c1c2c]">{preview.name}</h3>
+              <p className="text-sm text-[#8ba0b5] mt-0.5">{preview.sets} series × {preview.reps} reps</p>
+              <div className="mt-3 rounded-2xl bg-[#f4f8fc] px-4 py-3 flex items-start gap-2">
+                <span className="text-base">💡</span>
+                <p className="text-sm text-[#5f7185] leading-relaxed">{preview.tip}</p>
+              </div>
+              <button
+                onClick={() => setPreview(null)}
+                className="w-full mt-4 rounded-2xl bg-[#0b3557] text-white font-semibold py-3 text-sm"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
