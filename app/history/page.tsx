@@ -20,8 +20,8 @@ export default async function HistoryPage() {
     <>
       <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-6 pb-4">
         <div className="mb-6">
-          <p className="text-neutral-500 text-sm">Tu progreso</p>
-          <h1 className="text-2xl font-bold">Historial</h1>
+          <p className="text-[#5f7185] text-sm">Tu progreso</p>
+          <h1 className="text-2xl font-bold text-[#0c1c2c]">Historial</h1>
         </div>
         <HistoryView sessions={sessions ?? []} logs={logs ?? []} />
       </main>

@@ -27,86 +27,87 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col overflow-hidden">
-      {/* Background athlete image */}
+    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#0b3557] via-[#14487a] to-[#2a6db3]">
+      {/* Athlete image */}
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=90"
-          alt="Athlete"
+          alt="Atleta"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center opacity-40 mix-blend-luminosity"
           unoptimized
           priority
         />
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b3557] via-transparent to-[#0b3557]/60" />
       </div>
 
-      {/* Content */}
-      <div className="relative flex flex-col flex-1 px-6 pb-10">
+      <div className="relative flex flex-col flex-1 px-6 pb-8">
         {/* Logo */}
-        <div className="pt-16 mb-auto">
-          <div className="inline-flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#D4FF00] flex items-center justify-center">
-              <span className="text-black font-black text-lg">M</span>
-            </div>
-            <span className="text-white font-black text-xl tracking-tight">MI RUTINA</span>
-          </div>
+        <div className="pt-14 flex items-center gap-2">
+          <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 3c3 3 3 15 0 18M3 12h18" strokeLinecap="round" />
+          </svg>
+          <span className="text-white font-semibold text-xl tracking-tight">Mi Rutina</span>
         </div>
 
         {/* Hero text */}
-        <div className="mb-8">
-          <p className="text-[#D4FF00] text-sm font-semibold mb-2">Bienvenido a</p>
-          <h1 className="text-5xl font-black text-white leading-none mb-3">
-            MI<br />RUTINA
+        <div className="mt-auto mb-6">
+          <h1 className="text-[42px] leading-[1.05] font-bold text-white tracking-tight">
+            ENTRENÁ<br />CON MÉTODO
           </h1>
-          <p className="text-neutral-400 text-sm leading-relaxed">
-            Tu entrenamiento personal, día a día.<br />Registrá tu progreso y superate.
-          </p>
+          <p className="text-white/60 text-sm mt-2">Tu compañero de entrenamiento definitivo</p>
+        </div>
+
+        {/* Glass stat cards */}
+        <div className="flex gap-3 mb-6">
+          <div className="glass-dark rounded-3xl px-5 py-4 flex-1">
+            <p className="text-3xl font-bold text-white">6</p>
+            <p className="text-white/70 text-xs mt-1">Días de rutina</p>
+          </div>
+          <div className="glass-dark rounded-3xl px-5 py-4 flex-1">
+            <p className="text-3xl font-bold text-white">36+</p>
+            <p className="text-white/70 text-xs mt-1">Ejercicios guiados</p>
+          </div>
         </div>
 
         {!showForm ? (
-          /* Initial CTAs */
           <div className="space-y-3">
             <button
               onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-between rounded-full bg-[#D4FF00] text-black font-bold text-base px-6 py-4"
+              className="w-full rounded-2xl bg-white text-[#0b3557] font-semibold text-base py-4 card-shadow"
             >
-              <span>Empezar ahora</span>
-              <span className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center">→</span>
+              EMPEZAR
             </button>
             <Link
               href="/signup"
-              className="block w-full text-center rounded-full border border-white/20 text-white font-semibold text-base py-4"
+              className="block w-full text-center rounded-2xl border border-white/30 text-white font-medium text-base py-4"
             >
               Crear cuenta
             </Link>
           </div>
         ) : (
-          /* Login form */
           <form onSubmit={handleSubmit} className="space-y-3">
             <input
               type="email" required placeholder="Email"
               value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-neutral-500 outline-none focus:border-[#D4FF00] transition-colors"
+              className="w-full rounded-2xl glass-dark px-4 py-4 text-white placeholder-white/50 outline-none focus:border-white/60 transition-colors"
             />
             <input
               type="password" required placeholder="Contraseña"
               value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-neutral-500 outline-none focus:border-[#D4FF00] transition-colors"
+              className="w-full rounded-2xl glass-dark px-4 py-4 text-white placeholder-white/50 outline-none focus:border-white/60 transition-colors"
             />
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            {error && <p className="text-red-300 text-sm text-center">{error}</p>}
             <button
               type="submit" disabled={loading}
-              className="w-full flex items-center justify-between rounded-full bg-[#D4FF00] text-black font-bold text-base px-6 py-4 disabled:opacity-50"
+              className="w-full rounded-2xl bg-white text-[#0b3557] font-semibold text-base py-4 disabled:opacity-60 card-shadow"
             >
-              <span>{loading ? "Ingresando..." : "Ingresar"}</span>
-              <span className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center">→</span>
+              {loading ? "Ingresando..." : "Ingresar"}
             </button>
-            <p className="text-center text-sm text-neutral-500">
+            <p className="text-center text-sm text-white/60">
               ¿No tenés cuenta?{" "}
-              <Link href="/signup" className="text-[#D4FF00] font-semibold">Registrate</Link>
+              <Link href="/signup" className="text-white font-semibold underline underline-offset-2">Registrate</Link>
             </p>
           </form>
         )}

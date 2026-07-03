@@ -24,33 +24,33 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col overflow-hidden">
+    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#0b3557] via-[#14487a] to-[#2a6db3]">
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=90"
-          alt="Athlete" fill className="object-cover object-center" unoptimized priority
+          alt="Atleta" fill className="object-cover object-center opacity-30 mix-blend-luminosity" unoptimized priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b3557] via-transparent to-[#0b3557]/60" />
       </div>
 
-      <div className="relative flex flex-col flex-1 px-6 pb-10">
-        <div className="pt-14 mb-auto">
-          <Link href="/login" className="inline-flex items-center gap-2 text-neutral-400 text-sm">
+      <div className="relative flex flex-col flex-1 px-6 pb-8">
+        <div className="pt-14">
+          <Link href="/login" className="inline-flex items-center gap-2 text-white/70 text-sm">
             ← Volver
           </Link>
         </div>
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-white mb-2">Crear cuenta</h1>
-          <p className="text-neutral-400 text-sm">Empezá a registrar tu progreso hoy.</p>
+        <div className="mt-auto mb-6">
+          <h1 className="text-4xl font-bold text-white tracking-tight">Crear cuenta</h1>
+          <p className="text-white/60 text-sm mt-2">Empezá a registrar tu progreso hoy.</p>
         </div>
 
         {done ? (
-          <div className="rounded-3xl bg-[#D4FF00]/10 border border-[#D4FF00]/30 p-6 text-center">
-            <p className="text-2xl mb-2">📧</p>
-            <p className="text-[#D4FF00] font-bold mb-1">¡Cuenta creada!</p>
-            <p className="text-neutral-400 text-sm">Revisá tu email para confirmar y luego iniciá sesión.</p>
-            <Link href="/login" className="block mt-4 text-sm text-[#D4FF00] font-semibold">
+          <div className="glass-dark rounded-3xl p-6 text-center">
+            <p className="text-3xl mb-2">📧</p>
+            <p className="text-white font-semibold mb-1">¡Cuenta creada!</p>
+            <p className="text-white/60 text-sm">Revisá tu email para confirmar y luego iniciá sesión.</p>
+            <Link href="/login" className="inline-block mt-4 text-sm text-white font-semibold underline underline-offset-2">
               Ir al login →
             </Link>
           </div>
@@ -59,20 +59,19 @@ export default function SignupPage() {
             <input
               type="email" required placeholder="Email"
               value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-neutral-500 outline-none focus:border-[#D4FF00] transition-colors"
+              className="w-full rounded-2xl glass-dark px-4 py-4 text-white placeholder-white/50 outline-none transition-colors"
             />
             <input
               type="password" required minLength={6} placeholder="Contraseña (mín. 6 caracteres)"
               value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl bg-white/10 border border-white/20 px-4 py-4 text-white placeholder-neutral-500 outline-none focus:border-[#D4FF00] transition-colors"
+              className="w-full rounded-2xl glass-dark px-4 py-4 text-white placeholder-white/50 outline-none transition-colors"
             />
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            {error && <p className="text-red-300 text-sm text-center">{error}</p>}
             <button
               type="submit" disabled={loading}
-              className="w-full flex items-center justify-between rounded-full bg-[#D4FF00] text-black font-bold text-base px-6 py-4 disabled:opacity-50"
+              className="w-full rounded-2xl bg-white text-[#0b3557] font-semibold text-base py-4 disabled:opacity-60 card-shadow"
             >
-              <span>{loading ? "Creando..." : "Crear cuenta"}</span>
-              <span className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center">→</span>
+              {loading ? "Creando..." : "Crear cuenta"}
             </button>
           </form>
         )}

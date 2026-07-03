@@ -1,15 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0a0a0a;
-  --card: #141414;
-  --card2: #1a1a1a;
-  --border: #222222;
-  --accent: #D4FF00;
-  --accent-fg: #0a0a0a;
-  --muted: #555555;
-  --text: #ffffff;
-  --text2: #888888;
+  --bg: #eef3f8;
+  --card: #ffffff;
+  --navy: #0b3557;
+  --navy-2: #14487a;
+  --accent: #2f6fed;
+  --text: #0c1c2c;
+  --text2: #5f7185;
+  --border: #e2e9f1;
 }
 
 @theme inline {
@@ -30,3 +29,21 @@ body {
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-dark {
+  background: rgba(11, 53, 87, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.card-shadow {
+  box-shadow: 0 8px 30px rgba(12, 40, 70, 0.08);
+}

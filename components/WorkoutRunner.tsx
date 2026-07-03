@@ -9,6 +9,7 @@ import type { RoutineDay } from "@/lib/routines";
 type SetLog = { weight: string; reps: string; done: boolean };
 
 const REST_SECONDS = 60;
+const NAVY = "#0b3557";
 
 export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId: string }) {
   const router = useRouter();
@@ -110,15 +111,15 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
   if (finished) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] text-center gap-6 px-4">
-        <div className="w-24 h-24 rounded-full bg-emerald-500/20 flex items-center justify-center text-5xl">💪</div>
+        <div className="w-24 h-24 rounded-full bg-[#0b3557]/10 flex items-center justify-center text-5xl">🏆</div>
         <div>
-          <h2 className="text-3xl font-black">¡Gran sesión!</h2>
-          <p className="text-neutral-500 mt-2">Día {day.day} — {day.title}</p>
-          <p className="text-sm text-neutral-600 mt-1">
+          <h2 className="text-3xl font-bold text-[#0c1c2c]">¡Gran sesión!</h2>
+          <p className="text-[#5f7185] mt-2">Día {day.day} — {day.title}</p>
+          <p className="text-sm text-[#8ba0b5] mt-1">
             {Math.round((Date.now() - startedAt.current) / 60000)} min · {totalDone} series completadas
           </p>
         </div>
-        <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-emerald-500 text-black font-bold py-4 text-lg">
+        <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-[#0b3557] text-white font-semibold py-4 text-base card-shadow">
           Volver al inicio
         </button>
       </div>
@@ -129,27 +130,27 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
   if (resting) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] text-center gap-6 px-4">
-        <p className="text-neutral-500 text-xs uppercase tracking-widest font-semibold">Tiempo de descanso</p>
+        <p className="text-[#5f7185] text-xs uppercase tracking-widest font-semibold">Tiempo de descanso</p>
         <div className="relative w-40 h-40">
           <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="44" stroke="#222" strokeWidth="7" fill="none"/>
+            <circle cx="50" cy="50" r="44" stroke="#dde6ef" strokeWidth="7" fill="none"/>
             <circle
-              cx="50" cy="50" r="44" stroke="#34d399" strokeWidth="7" fill="none"
+              cx="50" cy="50" r="44" stroke={NAVY} strokeWidth="7" fill="none"
               strokeDasharray={`${2 * Math.PI * 44}`}
               strokeDashoffset={`${2 * Math.PI * 44 * (1 - restSeconds / REST_SECONDS)}`}
               strokeLinecap="round"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-5xl font-black tabular-nums">{restSeconds}</span>
-            <span className="text-xs text-neutral-500">seg</span>
+            <span className="text-5xl font-bold tabular-nums text-[#0c1c2c]">{restSeconds}</span>
+            <span className="text-xs text-[#5f7185]">seg</span>
           </div>
         </div>
         <div>
-          <p className="text-neutral-500 text-sm">Próxima serie</p>
-          <p className="font-bold text-lg mt-1">{exercise.name}</p>
+          <p className="text-[#5f7185] text-sm">Próxima serie</p>
+          <p className="font-bold text-lg mt-1 text-[#0c1c2c]">{exercise.name}</p>
         </div>
-        <button onClick={stopRest} className="rounded-2xl border border-[#333] px-10 py-3 text-sm font-semibold text-neutral-300">
+        <button onClick={stopRest} className="rounded-2xl bg-white card-shadow px-10 py-3 text-sm font-semibold text-[#0b3557]">
           Saltear descanso →
         </button>
       </div>
@@ -162,30 +163,30 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
 
       {/* Top bar */}
       <div className="flex items-center justify-between pt-2">
-        <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-[#1a1a1a] flex items-center justify-center">
-          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-neutral-400">
+        <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-white card-shadow flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#0b3557]">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
         </button>
         <div className="text-center">
-          <p className="text-xs text-neutral-500 font-semibold">DÍA {day.day} — {day.title.toUpperCase()}</p>
+          <p className="text-xs text-[#5f7185] font-semibold">DÍA {day.day} — {day.title.toUpperCase()}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs font-bold text-emerald-400">{totalDone}/{totalSets}</p>
-          <p className="text-[10px] text-neutral-600">series</p>
+          <p className="text-xs font-bold text-[#0b3557]">{totalDone}/{totalSets}</p>
+          <p className="text-[10px] text-[#8ba0b5]">series</p>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1 bg-[#222] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-[#dde6ef] rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${(totalDone / totalSets) * 100}%`, background: `#D4FF00` }}
+          style={{ width: `${(totalDone / totalSets) * 100}%`, background: NAVY }}
         />
       </div>
 
       {/* Exercise image */}
-      <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-[#161616]">
+      <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-[#dbe5ef] card-shadow">
         <Image
           src={exercise.image}
           alt={exercise.name}
@@ -193,8 +194,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
           className="object-cover"
           unoptimized
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b3557]/85 via-[#0b3557]/10 to-transparent" />
 
         {/* Exercise nav dots */}
         <div className="absolute top-3 left-0 right-0 flex justify-center gap-1.5">
@@ -205,7 +205,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
                 key={i}
                 onClick={() => { stopRest(); setExerciseIndex(i); }}
                 className={`rounded-full transition-all duration-200 ${
-                  i === exerciseIndex ? "w-5 h-2 bg-white" : exDone ? "w-2 h-2 bg-emerald-400" : "w-2 h-2 bg-white/30"
+                  i === exerciseIndex ? "w-5 h-2 bg-white" : exDone ? "w-2 h-2 bg-emerald-300" : "w-2 h-2 bg-white/40"
                 }`}
               />
             );
@@ -215,31 +215,31 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
         {/* Exercise info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full text-black" style={{ background: `#D4FF00` }}>
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full glass-dark text-white">
               {exerciseIndex + 1} / {day.exercises.length}
             </span>
             {exerciseDone && (
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-black">
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-400 text-[#0b3557]">
                 ✓ Completado
               </span>
             )}
           </div>
-          <h2 className="text-2xl font-black text-white leading-tight">{exercise.name}</h2>
-          <p className="text-sm font-semibold text-white/70 mt-0.5">
+          <h2 className="text-2xl font-bold text-white leading-tight">{exercise.name}</h2>
+          <p className="text-sm font-medium text-white/75 mt-0.5">
             {exercise.sets} series · {exercise.reps} reps
           </p>
         </div>
       </div>
 
       {/* Tip */}
-      <div className="rounded-2xl bg-[#161616] border border-[#222] px-4 py-3 flex items-start gap-3">
+      <div className="rounded-2xl bg-white card-shadow px-4 py-3 flex items-start gap-3">
         <span className="text-lg mt-0.5">💡</span>
-        <p className="text-sm text-neutral-400 leading-relaxed">{exercise.tip}</p>
+        <p className="text-sm text-[#5f7185] leading-relaxed">{exercise.tip}</p>
       </div>
 
       {/* Sets */}
-      <div className="rounded-3xl bg-[#161616] border border-[#222] p-4">
-        <p className="text-xs text-neutral-500 uppercase tracking-widest font-semibold mb-3">Registro de series</p>
+      <div className="rounded-3xl bg-white card-shadow p-4">
+        <p className="text-xs text-[#8ba0b5] uppercase tracking-widest font-semibold mb-3">Registro de series</p>
         <div className="space-y-2">
           {sets.map((set, i) => {
             const isActive = i === activeSetIndex;
@@ -248,15 +248,15 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
                 key={i}
                 className={`flex items-center gap-3 rounded-2xl p-3 transition-all border ${
                   set.done
-                    ? "border-emerald-800/50 bg-emerald-950/30"
+                    ? "border-emerald-200 bg-emerald-50"
                     : isActive
-                    ? "border-[#333] bg-[#1c1c1c]"
-                    : "border-transparent opacity-40"
+                    ? "border-[#c8d8ea] bg-[#f4f8fc]"
+                    : "border-transparent opacity-45"
                 }`}
               >
                 {/* Set badge */}
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                  set.done ? "bg-emerald-500 text-black" : isActive ? "bg-[#2a2a2a] text-white" : "bg-[#1a1a1a] text-neutral-600"
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                  set.done ? "bg-emerald-500 text-white" : isActive ? "bg-[#0b3557] text-white" : "bg-[#e2e9f1] text-[#8ba0b5]"
                 }`}>
                   {set.done ? "✓" : i + 1}
                 </div>
@@ -264,23 +264,23 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
                 {/* Inputs */}
                 <div className="flex items-center gap-2 flex-1">
                   <div className="flex-1">
-                    <p className="text-[10px] text-neutral-600 mb-1">KG</p>
+                    <p className="text-[10px] text-[#8ba0b5] mb-1 font-semibold">KG</p>
                     <input
                       type="number" inputMode="decimal" placeholder="—"
                       value={set.weight}
                       disabled={set.done || (!isActive && activeSetIndex !== -1)}
                       onChange={(e) => updateSet(i, "weight", e.target.value)}
-                      className="w-full rounded-xl bg-[#222] border border-[#2e2e2e] px-3 py-2 text-sm font-bold text-center disabled:opacity-40 outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full rounded-xl bg-white border border-[#dbe4ee] px-3 py-2 text-sm font-bold text-center text-[#0c1c2c] disabled:opacity-50 outline-none focus:border-[#0b3557] transition-colors"
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[10px] text-neutral-600 mb-1">REPS</p>
+                    <p className="text-[10px] text-[#8ba0b5] mb-1 font-semibold">REPS</p>
                     <input
                       type="number" inputMode="numeric" placeholder="—"
                       value={set.reps}
                       disabled={set.done || (!isActive && activeSetIndex !== -1)}
                       onChange={(e) => updateSet(i, "reps", e.target.value)}
-                      className="w-full rounded-xl bg-[#222] border border-[#2e2e2e] px-3 py-2 text-sm font-bold text-center disabled:opacity-40 outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full rounded-xl bg-white border border-[#dbe4ee] px-3 py-2 text-sm font-bold text-center text-[#0c1c2c] disabled:opacity-50 outline-none focus:border-[#0b3557] transition-colors"
                     />
                   </div>
                 </div>
@@ -288,8 +288,8 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
                 {isActive && (
                   <button
                     onClick={() => completeSet(i)}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-black font-bold"
-                    style={{ background: `#D4FF00` }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-white"
+                    style={{ background: NAVY }}
                   >
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                       <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
@@ -304,21 +304,21 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
 
       {/* HIIT / Cardio extra */}
       {day.extra && (
-        <div className="rounded-2xl bg-orange-500/10 border border-orange-500/20 px-4 py-3 flex items-center gap-3">
-          <span className="text-orange-400 text-xl">⚡</span>
+        <div className="rounded-2xl bg-[#fff5e9] border border-[#ffe1bd] px-4 py-3 flex items-center gap-3">
+          <span className="text-xl">⚡</span>
           <div>
-            <p className="text-xs text-orange-400 font-bold uppercase tracking-wide">Al finalizar</p>
-            <p className="text-sm text-orange-300">{day.extra}</p>
+            <p className="text-xs text-[#b46609] font-bold uppercase tracking-wide">Al finalizar</p>
+            <p className="text-sm text-[#8a5211]">{day.extra}</p>
           </div>
         </div>
       )}
 
-      {/* Navigation — LIBRE, sin bloqueo */}
+      {/* Navigation — libre */}
       <div className="flex gap-3 pb-4">
         <button
           onClick={() => { stopRest(); setExerciseIndex((i) => Math.max(0, i - 1)); }}
           disabled={exerciseIndex === 0}
-          className="flex-1 rounded-2xl border border-[#2a2a2a] py-4 font-semibold text-sm disabled:opacity-30 text-neutral-300"
+          className="flex-1 rounded-2xl bg-white card-shadow py-4 font-semibold text-sm disabled:opacity-40 text-[#0b3557]"
         >
           ← Anterior
         </button>
@@ -326,8 +326,8 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
         {exerciseIndex < day.exercises.length - 1 ? (
           <button
             onClick={() => { stopRest(); setExerciseIndex((i) => i + 1); }}
-            className="flex-1 rounded-2xl font-bold py-4 text-sm text-black"
-            style={{ background: `#D4FF00` }}
+            className="flex-1 rounded-2xl font-semibold py-4 text-sm text-white card-shadow"
+            style={{ background: NAVY }}
           >
             Siguiente →
           </button>
@@ -335,7 +335,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
           <button
             onClick={finishWorkout}
             disabled={finishing}
-            className="flex-1 rounded-2xl bg-emerald-500 text-black font-bold py-4 text-sm disabled:opacity-50"
+            className="flex-1 rounded-2xl bg-[#0b3557] text-white font-semibold py-4 text-sm disabled:opacity-50 card-shadow"
           >
             {finishing ? "Guardando..." : "Finalizar 🏁"}
           </button>
