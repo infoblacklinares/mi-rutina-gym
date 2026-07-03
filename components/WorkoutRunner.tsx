@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { RoutineDay } from "@/lib/routines";
 import type { LastSetData } from "@/app/day/[dayNumber]/page";
 
-type SetLog = { weight: string; reps: string; done: boolean };
-
-const REST_SECONDS = 60;
 const NAVY = "#0b3557";
 
 export default function WorkoutRunner({
@@ -27,27 +24,11 @@ export default function WorkoutRunner({
   const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [exerciseIndex, setExerciseIndex] = useState(0);
-  // Precarga: peso y reps de la última sesión de cada ejercicio/serie
-  const [setLogs, setSetLogs] = useState<SetLog[][]>(() =>
-    day.exercises.map((ex) =>
-      Array.from({ length: ex.sets }, (_, i) => {
-        const prev = lastSets[ex.name]?.[i + 1];
-        return {
-          weight: prev?.weight != null ? String(prev.weight) : "",
-          reps: prev?.reps != null ? String(prev.reps) : "",
-          done: false,
-        };
-      })
-    )
-  );
-  const [resting, setResting] = useState(false);
-  const [restSeconds, setRestSeconds] = useState(REST_SECONDS);
   const [finishing, setFinishing] = useState(false);
   const [finished, setFinished] = useState(false);
   const startedAt = useRef(Date.now());
-  const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Último peso conocido por ejercicio (para mostrar en la lista)
+  // Último peso conocido por ejercicio
   function lastWeightOf(exerciseName: string): number | null {
     const sets = lastSets[exerciseName];
     if (!sets) return null;
@@ -56,6 +37,37 @@ export default function WorkoutRunner({
       .filter((w): w is number => w != null);
     return weights.length ? Math.max(...weights) : null;
   }
+
+  // Un peso por ejercicio, precargado con el de la última vez
+  const [weights, setWeights] = useState<string[]>(() =>
+    day.exercises.map((ex) => {
+      const w = lastWeightOf(ex.name);
+      return w != null ? String(w) : "";
+    })
+  );
+  const savedRef = useRef<boolean[]>(day.exercises.map(() => false));
+
+  // ─── Cronómetro de descanso (manual) ───
+  const [chronoRunning, setChronoRunning] = useState(false);
+  const [chronoSeconds, setChronoSeconds] = useState(0);
+  const chronoRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function toggleChrono() {
+    if (chronoRunning) {
+      if (chronoRef.current) clearInterval(chronoRef.current);
+      setChronoRunning(false);
+      setChronoSeconds(0);
+    } else {
+      setChronoSeconds(0);
+      setChronoRunning(true);
+      chronoRef.current = setInterval(() => setChronoSeconds((s) => s + 1), 1000);
+    }
+  }
+
+  useEffect(() => () => { if (chronoRef.current) clearInterval(chronoRef.current); }, []);
+
+  const fmt = (s: number) =>
+    `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   async function startWorkout(atIndex = 0) {
     setExerciseIndex(atIndex);
@@ -71,63 +83,30 @@ export default function WorkoutRunner({
     }
   }
 
-  const stopRest = useCallback(() => {
-    if (restRef.current) clearInterval(restRef.current);
-    setResting(false);
-    setRestSeconds(REST_SECONDS);
-  }, []);
-
-  function startRest() {
-    setResting(true);
-    setRestSeconds(REST_SECONDS);
-    restRef.current = setInterval(() => {
-      setRestSeconds((s) => {
-        if (s <= 1) { stopRest(); return REST_SECONDS; }
-        return s - 1;
-      });
-    }, 1000);
-  }
-
-  useEffect(() => () => { if (restRef.current) clearInterval(restRef.current); }, []);
-
-  const exercise = day.exercises[exerciseIndex];
-  const sets = setLogs[exerciseIndex];
-  const activeSetIndex = sets.findIndex((s) => !s.done);
-  const totalDone = setLogs.reduce((acc, ex) => acc + ex.filter((s) => s.done).length, 0);
-  const totalSets = setLogs.reduce((acc, ex) => acc + ex.length, 0);
-  const exerciseDone = sets.every((s) => s.done);
-
-  function updateSet(setIndex: number, field: "weight" | "reps", value: string) {
-    setSetLogs((prev) => {
-      const next = prev.map((arr) => arr.slice());
-      next[exerciseIndex][setIndex] = { ...next[exerciseIndex][setIndex], [field]: value };
-      return next;
-    });
-  }
-
-  async function completeSet(setIndex: number) {
-    const set = sets[setIndex];
-    setSetLogs((prev) => {
-      const next = prev.map((arr) => arr.slice());
-      next[exerciseIndex][setIndex] = { ...next[exerciseIndex][setIndex], done: true };
-      return next;
-    });
+  // Guarda el peso del ejercicio actual (una vez por sesión, si hay valor)
+  async function saveCurrent(index: number) {
+    const w = weights[index];
+    if (!w || savedRef.current[index]) return;
+    savedRef.current[index] = true;
     await supabase.from("workout_logs").insert({
       user_id: userId,
       session_id: sessionId,
       day_number: day.day,
-      exercise_name: exercise.name,
-      set_number: setIndex + 1,
-      weight_kg: set.weight ? Number(set.weight) : null,
-      reps_done: set.reps ? Number(set.reps) : null,
+      exercise_name: day.exercises[index].name,
+      set_number: 1,
+      weight_kg: Number(w),
+      reps_done: null,
     });
+  }
 
-    const isLastSet = setIndex === sets.length - 1;
-    if (!isLastSet) startRest();
+  function goTo(index: number) {
+    saveCurrent(exerciseIndex);
+    setExerciseIndex(index);
   }
 
   async function finishWorkout() {
     setFinishing(true);
+    await saveCurrent(exerciseIndex);
     const durationMinutes = Math.round((Date.now() - startedAt.current) / 60000);
     if (sessionId) {
       await supabase.from("workout_sessions")
@@ -138,11 +117,12 @@ export default function WorkoutRunner({
     setFinished(true);
   }
 
-  /* ─── LISTA DE EJERCICIOS (pantalla inicial) ─── */
+  const exercise = day.exercises[exerciseIndex];
+
+  /* ─── LISTA DE EJERCICIOS ─── */
   if (!started) {
     return (
       <div className="flex flex-col gap-4">
-        {/* Top bar */}
         <div className="flex items-center gap-3 pt-2">
           <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-white card-shadow flex items-center justify-center flex-shrink-0">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#0b3557]">
@@ -155,7 +135,6 @@ export default function WorkoutRunner({
           </div>
         </div>
 
-        {/* Lista de ejercicios con último peso */}
         <div className="rounded-3xl bg-white card-shadow p-2">
           {day.exercises.map((ex, i) => {
             const w = lastWeightOf(ex.name);
@@ -187,7 +166,6 @@ export default function WorkoutRunner({
           })}
         </div>
 
-        {/* Extra */}
         {day.extra && (
           <div className="rounded-2xl bg-[#fff5e9] border border-[#ffe1bd] px-4 py-3 flex items-center gap-3">
             <span className="text-xl">⚡</span>
@@ -214,42 +192,11 @@ export default function WorkoutRunner({
           <h2 className="text-3xl font-bold text-[#0c1c2c]">¡Gran sesión!</h2>
           <p className="text-[#5f7185] mt-2">Día {day.day} — {day.title}</p>
           <p className="text-sm text-[#8ba0b5] mt-1">
-            {Math.round((Date.now() - startedAt.current) / 60000)} min · {totalDone} series completadas
+            {Math.round((Date.now() - startedAt.current) / 60000)} min de entrenamiento
           </p>
         </div>
         <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-[#0b3557] text-white font-semibold py-4 text-base card-shadow">
           Volver al inicio
-        </button>
-      </div>
-    );
-  }
-
-  /* ─── PANTALLA DESCANSO ─── */
-  if (resting) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[80vh] text-center gap-6 px-4">
-        <p className="text-[#5f7185] text-xs uppercase tracking-widest font-semibold">Tiempo de descanso</p>
-        <div className="relative w-40 h-40">
-          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="44" stroke="#dde6ef" strokeWidth="7" fill="none"/>
-            <circle
-              cx="50" cy="50" r="44" stroke={NAVY} strokeWidth="7" fill="none"
-              strokeDasharray={`${2 * Math.PI * 44}`}
-              strokeDashoffset={`${2 * Math.PI * 44 * (1 - restSeconds / REST_SECONDS)}`}
-              strokeLinecap="round"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-5xl font-bold tabular-nums text-[#0c1c2c]">{restSeconds}</span>
-            <span className="text-xs text-[#5f7185]">seg</span>
-          </div>
-        </div>
-        <div>
-          <p className="text-[#5f7185] text-sm">Próxima serie</p>
-          <p className="font-bold text-lg mt-1 text-[#0c1c2c]">{exercise.name}</p>
-        </div>
-        <button onClick={stopRest} className="rounded-2xl bg-white card-shadow px-10 py-3 text-sm font-semibold text-[#0b3557]">
-          Saltear descanso →
         </button>
       </div>
     );
@@ -266,22 +213,29 @@ export default function WorkoutRunner({
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
         </button>
-        <div className="text-center">
-          <p className="text-xs text-[#5f7185] font-semibold">DÍA {day.day} — {day.title.toUpperCase()}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-xs font-bold text-[#0b3557]">{totalDone}/{totalSets}</p>
-          <p className="text-[10px] text-[#8ba0b5]">series</p>
-        </div>
+        <p className="text-xs text-[#5f7185] font-semibold">DÍA {day.day} — {day.title.toUpperCase()}</p>
+        <p className="text-xs font-bold text-[#0b3557]">{exerciseIndex + 1}/{day.exercises.length}</p>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-1.5 bg-[#dde6ef] rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${(totalDone / totalSets) * 100}%`, background: NAVY }}
-        />
-      </div>
+      {/* ─── Cronómetro de descanso ─── */}
+      <button
+        onClick={toggleChrono}
+        className={`w-full rounded-2xl card-shadow py-3 px-4 flex items-center justify-between transition-colors ${
+          chronoRunning ? "bg-[#0b3557]" : "bg-white"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <svg viewBox="0 0 24 24" fill="currentColor" className={`w-5 h-5 ${chronoRunning ? "text-white" : "text-[#0b3557]"}`}>
+            <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0 0 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+          </svg>
+          <span className={`text-sm font-semibold ${chronoRunning ? "text-white/80" : "text-[#5f7185]"}`}>
+            {chronoRunning ? "Descansando..." : "Cronómetro de descanso"}
+          </span>
+        </div>
+        <span className={`text-2xl font-bold tabular-nums ${chronoRunning ? "text-white" : "text-[#0b3557]"}`}>
+          {chronoRunning ? fmt(chronoSeconds) : "▶"}
+        </span>
+      </button>
 
       {/* Exercise image */}
       <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-[#dbe5ef] card-shadow">
@@ -294,38 +248,23 @@ export default function WorkoutRunner({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b3557]/85 via-[#0b3557]/10 to-transparent" />
 
-        {/* Exercise nav dots */}
+        {/* Nav dots */}
         <div className="absolute top-3 left-0 right-0 flex justify-center gap-1.5">
-          {day.exercises.map((_, i) => {
-            const exDone = setLogs[i].every((s) => s.done);
-            return (
-              <button
-                key={i}
-                onClick={() => { stopRest(); setExerciseIndex(i); }}
-                className={`rounded-full transition-all duration-200 ${
-                  i === exerciseIndex ? "w-5 h-2 bg-white" : exDone ? "w-2 h-2 bg-emerald-300" : "w-2 h-2 bg-white/40"
-                }`}
-              />
-            );
-          })}
+          {day.exercises.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all duration-200 ${
+                i === exerciseIndex ? "w-5 h-2 bg-white" : "w-2 h-2 bg-white/40"
+              }`}
+            />
+          ))}
         </div>
 
-        {/* Exercise info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full glass-dark text-white">
-              {exerciseIndex + 1} / {day.exercises.length}
-            </span>
-            {exerciseDone && (
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-400 text-[#0b3557]">
-                ✓ Completado
-              </span>
-            )}
-          </div>
           <h2 className="text-2xl font-bold text-white leading-tight">{exercise.name}</h2>
           <p className="text-sm font-medium text-white/75 mt-0.5">
             {exercise.sets} series · {exercise.reps} reps
-            {lastWeightOf(exercise.name) != null && ` · Última vez: ${lastWeightOf(exercise.name)} kg`}
           </p>
         </div>
       </div>
@@ -336,72 +275,34 @@ export default function WorkoutRunner({
         <p className="text-sm text-[#5f7185] leading-relaxed">{exercise.tip}</p>
       </div>
 
-      {/* Sets */}
-      <div className="rounded-3xl bg-white card-shadow p-4">
-        <p className="text-xs text-[#8ba0b5] uppercase tracking-widest font-semibold mb-3">Registro de series</p>
-        <div className="space-y-2">
-          {sets.map((set, i) => {
-            const isActive = i === activeSetIndex;
-            return (
-              <div
-                key={i}
-                className={`flex items-center gap-3 rounded-2xl p-3 transition-all border ${
-                  set.done
-                    ? "border-emerald-200 bg-emerald-50"
-                    : isActive
-                    ? "border-[#c8d8ea] bg-[#f4f8fc]"
-                    : "border-transparent opacity-45"
-                }`}
-              >
-                {/* Set badge */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                  set.done ? "bg-emerald-500 text-white" : isActive ? "bg-[#0b3557] text-white" : "bg-[#e2e9f1] text-[#8ba0b5]"
-                }`}>
-                  {set.done ? "✓" : i + 1}
-                </div>
-
-                {/* Inputs */}
-                <div className="flex items-center gap-2 flex-1">
-                  <div className="flex-1">
-                    <p className="text-[10px] text-[#8ba0b5] mb-1 font-semibold">KG</p>
-                    <input
-                      type="number" inputMode="decimal" placeholder="—"
-                      value={set.weight}
-                      disabled={set.done || (!isActive && activeSetIndex !== -1)}
-                      onChange={(e) => updateSet(i, "weight", e.target.value)}
-                      className="w-full rounded-xl bg-white border border-[#dbe4ee] px-3 py-2 text-sm font-bold text-center text-[#0c1c2c] disabled:opacity-50 outline-none focus:border-[#0b3557] transition-colors"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-[10px] text-[#8ba0b5] mb-1 font-semibold">REPS</p>
-                    <input
-                      type="number" inputMode="numeric" placeholder="—"
-                      value={set.reps}
-                      disabled={set.done || (!isActive && activeSetIndex !== -1)}
-                      onChange={(e) => updateSet(i, "reps", e.target.value)}
-                      className="w-full rounded-xl bg-white border border-[#dbe4ee] px-3 py-2 text-sm font-bold text-center text-[#0c1c2c] disabled:opacity-50 outline-none focus:border-[#0b3557] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                {isActive && (
-                  <button
-                    onClick={() => completeSet(i)}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-white"
-                    style={{ background: NAVY }}
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                  </button>
-                )}
-              </div>
-            );
-          })}
+      {/* ─── Peso ─── */}
+      <div className="rounded-3xl bg-white card-shadow p-5 flex items-center gap-4">
+        <div className="flex-1">
+          <p className="text-xs text-[#8ba0b5] uppercase tracking-widest font-semibold">Peso de hoy</p>
+          {lastWeightOf(exercise.name) != null && (
+            <p className="text-xs text-[#9db0c3] mt-0.5">Última vez: {lastWeightOf(exercise.name)} kg</p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="0"
+            value={weights[exerciseIndex]}
+            onChange={(e) =>
+              setWeights((prev) => {
+                const next = prev.slice();
+                next[exerciseIndex] = e.target.value;
+                return next;
+              })
+            }
+            className="w-24 rounded-2xl bg-[#f4f8fc] border border-[#dbe4ee] px-3 py-3 text-2xl font-bold text-center text-[#0c1c2c] outline-none focus:border-[#0b3557] transition-colors"
+          />
+          <span className="text-sm font-semibold text-[#5f7185]">kg</span>
         </div>
       </div>
 
-      {/* HIIT / Cardio extra */}
+      {/* HIIT / Cardio */}
       {day.extra && (
         <div className="rounded-2xl bg-[#fff5e9] border border-[#ffe1bd] px-4 py-3 flex items-center gap-3">
           <span className="text-xl">⚡</span>
@@ -412,10 +313,10 @@ export default function WorkoutRunner({
         </div>
       )}
 
-      {/* Navigation — libre */}
+      {/* Navigation */}
       <div className="flex gap-3 pb-4">
         <button
-          onClick={() => { stopRest(); setExerciseIndex((i) => Math.max(0, i - 1)); }}
+          onClick={() => goTo(Math.max(0, exerciseIndex - 1))}
           disabled={exerciseIndex === 0}
           className="flex-1 rounded-2xl bg-white card-shadow py-4 font-semibold text-sm disabled:opacity-40 text-[#0b3557]"
         >
@@ -424,7 +325,7 @@ export default function WorkoutRunner({
 
         {exerciseIndex < day.exercises.length - 1 ? (
           <button
-            onClick={() => { stopRest(); setExerciseIndex((i) => i + 1); }}
+            onClick={() => goTo(exerciseIndex + 1)}
             className="flex-1 rounded-2xl font-semibold py-4 text-sm text-white card-shadow"
             style={{ background: NAVY }}
           >
