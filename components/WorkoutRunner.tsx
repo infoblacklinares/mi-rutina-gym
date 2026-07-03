@@ -5,21 +5,39 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { RoutineDay } from "@/lib/routines";
+import type { LastSetData } from "@/app/day/[dayNumber]/page";
 
 type SetLog = { weight: string; reps: string; done: boolean };
 
 const REST_SECONDS = 60;
 const NAVY = "#0b3557";
 
-export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId: string }) {
+export default function WorkoutRunner({
+  day,
+  userId,
+  lastSets,
+}: {
+  day: RoutineDay;
+  userId: string;
+  lastSets: Record<string, Record<number, LastSetData>>;
+}) {
   const router = useRouter();
   const supabase = createClient();
 
+  const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [exerciseIndex, setExerciseIndex] = useState(0);
+  // Precarga: peso y reps de la última sesión de cada ejercicio/serie
   const [setLogs, setSetLogs] = useState<SetLog[][]>(() =>
     day.exercises.map((ex) =>
-      Array.from({ length: ex.sets }, () => ({ weight: "", reps: "", done: false }))
+      Array.from({ length: ex.sets }, (_, i) => {
+        const prev = lastSets[ex.name]?.[i + 1];
+        return {
+          weight: prev?.weight != null ? String(prev.weight) : "",
+          reps: prev?.reps != null ? String(prev.reps) : "",
+          done: false,
+        };
+      })
     )
   );
   const [resting, setResting] = useState(false);
@@ -29,16 +47,29 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
   const startedAt = useRef(Date.now());
   const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    supabase
-      .from("workout_sessions")
-      .insert({ user_id: userId, day_number: day.day, day_title: day.title })
-      .select("id").single()
-      .then(({ data }) => { if (!cancelled && data) setSessionId(data.id); });
-    return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Último peso conocido por ejercicio (para mostrar en la lista)
+  function lastWeightOf(exerciseName: string): number | null {
+    const sets = lastSets[exerciseName];
+    if (!sets) return null;
+    const weights = Object.values(sets)
+      .map((s) => s.weight)
+      .filter((w): w is number => w != null);
+    return weights.length ? Math.max(...weights) : null;
+  }
+
+  async function startWorkout(atIndex = 0) {
+    setExerciseIndex(atIndex);
+    setStarted(true);
+    startedAt.current = Date.now();
+    if (!sessionId) {
+      const { data } = await supabase
+        .from("workout_sessions")
+        .insert({ user_id: userId, day_number: day.day, day_title: day.title })
+        .select("id")
+        .single();
+      if (data) setSessionId(data.id);
+    }
+  }
 
   const stopRest = useCallback(() => {
     if (restRef.current) clearInterval(restRef.current);
@@ -107,6 +138,73 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
     setFinished(true);
   }
 
+  /* ─── LISTA DE EJERCICIOS (pantalla inicial) ─── */
+  if (!started) {
+    return (
+      <div className="flex flex-col gap-4">
+        {/* Top bar */}
+        <div className="flex items-center gap-3 pt-2">
+          <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-white card-shadow flex items-center justify-center flex-shrink-0">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#0b3557]">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
+          <div>
+            <p className="text-xs text-[#8ba0b5] font-semibold">DÍA {day.day}</p>
+            <h1 className="font-bold text-lg text-[#0c1c2c] leading-tight">{day.title}</h1>
+          </div>
+        </div>
+
+        {/* Lista de ejercicios con último peso */}
+        <div className="rounded-3xl bg-white card-shadow p-2">
+          {day.exercises.map((ex, i) => {
+            const w = lastWeightOf(ex.name);
+            return (
+              <button
+                key={ex.name}
+                onClick={() => startWorkout(i)}
+                className="w-full flex items-center gap-3 p-3 rounded-2xl active:bg-[#f4f8fc] transition-colors text-left"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#eef3f8] flex items-center justify-center text-sm font-bold text-[#0b3557] flex-shrink-0">
+                  {i + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-[#0c1c2c] truncate">{ex.name}</p>
+                  <p className="text-xs text-[#8ba0b5]">{ex.sets} × {ex.reps}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  {w != null ? (
+                    <>
+                      <p className="font-bold text-[#0b3557]">{w} kg</p>
+                      <p className="text-[10px] text-[#9db0c3]">última vez</p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-[#c3cfdc]">— kg</p>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Extra */}
+        {day.extra && (
+          <div className="rounded-2xl bg-[#fff5e9] border border-[#ffe1bd] px-4 py-3 flex items-center gap-3">
+            <span className="text-xl">⚡</span>
+            <p className="text-sm text-[#8a5211]">{day.extra}</p>
+          </div>
+        )}
+
+        <button
+          onClick={() => startWorkout(0)}
+          className="w-full rounded-2xl bg-[#0b3557] text-white font-semibold py-4 text-base card-shadow active:scale-[0.98] transition-transform"
+        >
+          Empezar entrenamiento
+        </button>
+      </div>
+    );
+  }
+
   /* ─── PANTALLA FINAL ─── */
   if (finished) {
     return (
@@ -163,7 +261,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
 
       {/* Top bar */}
       <div className="flex items-center justify-between pt-2">
-        <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-white card-shadow flex items-center justify-center">
+        <button onClick={() => setStarted(false)} className="w-9 h-9 rounded-xl bg-white card-shadow flex items-center justify-center">
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#0b3557]">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
@@ -227,6 +325,7 @@ export default function WorkoutRunner({ day, userId }: { day: RoutineDay; userId
           <h2 className="text-2xl font-bold text-white leading-tight">{exercise.name}</h2>
           <p className="text-sm font-medium text-white/75 mt-0.5">
             {exercise.sets} series · {exercise.reps} reps
+            {lastWeightOf(exercise.name) != null && ` · Última vez: ${lastWeightOf(exercise.name)} kg`}
           </p>
         </div>
       </div>
