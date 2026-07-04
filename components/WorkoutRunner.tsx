@@ -6,6 +6,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { Exercise, RoutineDay } from "@/lib/routines";
 import type { LastSetData } from "@/app/day/[dayNumber]/page";
+import SharePRButton, { type PR } from "@/components/SharePRButton";
 
 export default function WorkoutRunner({
   day,
@@ -22,6 +23,7 @@ export default function WorkoutRunner({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [preview, setPreview] = useState<Exercise | null>(null);
+  const [prs, setPrs] = useState<PR[]>([]);
   const startedAt = useRef(Date.now());
 
   function lastWeightOf(exerciseName: string): number | null {
@@ -93,6 +95,19 @@ export default function WorkoutRunner({
 
     if (rows.length) await supabase.from("workout_logs").insert(rows);
 
+    // Detectar récords personales (peso de hoy > máximo histórico del ejercicio)
+    const newPrs: PR[] = [];
+    day.exercises.forEach((ex, i) => {
+      const w = weights[i];
+      if (!w) return;
+      const prev = lastWeightOf(ex.name);
+      if (prev == null || Number(w) > prev) {
+        if (prev != null) newPrs.push({ name: ex.name, weight: Number(w), prev });
+      }
+    });
+    newPrs.sort((a, b) => (b.weight - (b.prev ?? 0)) - (a.weight - (a.prev ?? 0)));
+    setPrs(newPrs);
+
     setSaving(false);
     setSaved(true);
   }
@@ -101,11 +116,32 @@ export default function WorkoutRunner({
   if (saved) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] text-center gap-6 px-4">
-        <div className="w-24 h-24 rounded-full bg-[#0b3557]/10 flex items-center justify-center text-5xl">🏆</div>
+        <div className="w-24 h-24 rounded-full bg-[#0b3557]/10 flex items-center justify-center text-5xl">
+          {prs.length > 0 ? "🏆" : "💪"}
+        </div>
         <div>
-          <h2 className="text-3xl font-bold text-[#0c1c2c]">¡Gran sesión!</h2>
+          <h2 className="text-3xl font-bold text-[#0c1c2c]">
+            {prs.length > 0 ? "¡Nuevo récord!" : "¡Gran sesión!"}
+          </h2>
           <p className="text-[#5f7185] mt-2">Día {day.day} — {day.title}</p>
         </div>
+
+        {prs.length > 0 && (
+          <div className="w-full max-w-xs space-y-2">
+            {prs.map((pr) => (
+              <div key={pr.name} className="rounded-2xl bg-white card-shadow px-4 py-3 flex items-center justify-between">
+                <div className="text-left">
+                  <p className="font-semibold text-sm text-[#0c1c2c]">{pr.name}</p>
+                  <p className="text-xs text-[#8ba0b5]">antes {pr.prev} kg</p>
+                </div>
+                <p className="font-bold text-lg text-[#0b3557]">{pr.weight} kg 🎉</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {prs.length > 0 && <SharePRButton prs={prs} />}
+
         <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-[#0b3557] text-white font-semibold py-4 text-base card-shadow">
           Volver al inicio
         </button>
