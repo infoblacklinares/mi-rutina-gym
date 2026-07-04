@@ -1,22 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  async function logout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  }
 
   const isHome = pathname === "/";
   const isHistory = pathname === "/history";
+  const isProfile = pathname === "/profile";
 
   const item = (active: boolean) =>
     `flex flex-col items-center gap-1 ${active ? "text-[#0b3557]" : "text-[#9db0c3]"}`;
@@ -37,12 +29,12 @@ export default function BottomNav() {
         <span className="text-[10px] font-semibold">Progreso</span>
       </Link>
 
-      <button onClick={logout} className={item(false)}>
+      <Link href="/profile" className={item(isProfile)}>
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
         </svg>
-        <span className="text-[10px] font-semibold">Salir</span>
-      </button>
+        <span className="text-[10px] font-semibold">Perfil</span>
+      </Link>
     </nav>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { getUserRoutine, computeStreak } from "@/lib/data";
+import { ensureProfile } from "@/lib/social";
 import BottomNav from "@/components/BottomNav";
 import ShareButton from "@/components/ShareButton";
 
@@ -10,6 +11,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const routine = user ? await getUserRoutine(supabase, user.id) : null;
+  if (user) await ensureProfile(supabase, user.id, user.email ?? "atleta");
 
   const { data: sessions } = await supabase
     .from("workout_sessions")
@@ -64,9 +66,9 @@ export default async function DashboardPage() {
                     <span className="text-white text-xs font-bold">{streak}</span>
                   </div>
                 )}
-                <div className="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-semibold text-sm capitalize">
+                <Link href="/profile" className="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-semibold text-sm capitalize">
                   {username[0]}
-                </div>
+                </Link>
               </div>
             </div>
 
