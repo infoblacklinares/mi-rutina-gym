@@ -9,12 +9,15 @@ export default function ShareButton({ shareCode }: { shareCode: string }) {
     const url = `${window.location.origin}/r/${shareCode}`;
     const text = "Esta es mi rutina de gimnasio 💪 Copiala y entrenemos juntos:";
 
-    if (navigator.share) {
+    // Menú nativo solo en celular; en desktop el share de Windows es poco confiable
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.share) {
       try {
         await navigator.share({ title: "Mi Rutina", text, url });
         return;
       } catch {
-        // usuario canceló; probar clipboard
+        // usuario canceló o falló; cae al clipboard
       }
     }
     await navigator.clipboard.writeText(url);
