@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { getDay } from "@/lib/routines";
 import { createClient } from "@/lib/supabase/server";
+import { getUserRoutine } from "@/lib/data";
 import WorkoutRunner from "@/components/WorkoutRunner";
 
 export type LastSetData = { weight: number | null; reps: number | null };
@@ -11,14 +11,14 @@ export default async function DayPage({
   params: Promise<{ dayNumber: string }>;
 }) {
   const { dayNumber } = await params;
-  const day = getDay(Number(dayNumber));
-
-  if (!day) notFound();
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) notFound();
+
+  const routine = await getUserRoutine(supabase, user.id);
+  const day = routine?.days.find((d) => d.day === Number(dayNumber));
+  if (!day) notFound();
 
   // Últimos registros de este día para precargar pesos
   const { data: logs } = await supabase
@@ -28,7 +28,6 @@ export default async function DayPage({
     .order("created_at", { ascending: false })
     .limit(200);
 
-  // Por ejercicio y número de serie, el registro más reciente
   const lastSets: Record<string, Record<number, LastSetData>> = {};
   for (const log of logs ?? []) {
     const byExercise = (lastSets[log.exercise_name] ??= {});

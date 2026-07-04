@@ -1,18 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ROUTINE } from "@/lib/routines";
 import { createClient } from "@/lib/supabase/server";
+import { getUserRoutine, computeStreak } from "@/lib/data";
 import BottomNav from "@/components/BottomNav";
+import ShareButton from "@/components/ShareButton";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  const routine = user ? await getUserRoutine(supabase, user.id) : null;
+
   const { data: sessions } = await supabase
     .from("workout_sessions")
     .select("day_number, started_at, completed_at, duration_minutes")
     .order("started_at", { ascending: false })
-    .limit(50);
+    .limit(60);
 
   const lastByDay = new Map<number, string>();
   const completedDays = new Set<number>();
@@ -25,9 +28,12 @@ export default async function DashboardPage() {
 
   const totalSessions = sessions?.filter((s) => s.completed_at).length ?? 0;
   const username = user?.email?.split("@")[0] ?? "Atleta";
+  const streak = computeStreak(
+    (sessions ?? []).filter((s) => s.completed_at).map((s) => s.started_at)
+  );
 
-  // Sugerencia del día: el siguiente día no completado (o el 1)
-  const nextDay = ROUTINE.find((d) => !completedDays.has(d.day)) ?? ROUTINE[0];
+  const days = routine?.days ?? [];
+  const nextDay = days.find((d) => !completedDays.has(d.day)) ?? days[0];
 
   return (
     <>
@@ -51,16 +57,26 @@ export default async function DashboardPage() {
                 </svg>
                 <span className="text-white font-semibold text-lg">Mi Rutina</span>
               </div>
-              <div className="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-semibold text-sm capitalize">
-                {username[0]}
+              <div className="flex items-center gap-2">
+                {streak > 0 && (
+                  <div className="flex items-center gap-1 rounded-full bg-white/15 border border-white/25 px-3 py-1.5">
+                    <span className="text-sm">🔥</span>
+                    <span className="text-white text-xs font-bold">{streak}</span>
+                  </div>
+                )}
+                <div className="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-semibold text-sm capitalize">
+                  {username[0]}
+                </div>
               </div>
             </div>
 
             {/* Greeting */}
             <p className="text-white/60 text-sm capitalize">Hola, {username}</p>
-            <h1 className="text-white text-3xl font-bold tracking-tight mt-1 mb-6">
-              Hoy: {nextDay.title}
+            <h1 className="text-white text-3xl font-bold tracking-tight mt-1 mb-4">
+              {nextDay ? `Hoy: ${nextDay.title}` : "Tu rutina"}
             </h1>
+
+            {routine && <div className="mb-6"><ShareButton shareCode={routine.shareCode} /></div>}
 
             {/* Stats row */}
             <div className="flex items-end justify-between text-white">
@@ -69,15 +85,15 @@ export default async function DashboardPage() {
                 <p className="text-[11px] text-white/60">Sesiones</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{completedDays.size}<span className="text-white/50 text-base">/6</span></p>
-                <p className="text-[11px] text-white/60">Días</p>
+                <p className="text-2xl font-bold">{streak}<span className="text-white/50 text-base"> 🔥</span></p>
+                <p className="text-[11px] text-white/60">Racha</p>
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalMinutes}</p>
                 <p className="text-[11px] text-white/60">Minutos</p>
               </div>
               <div>
-                <p className="text-2xl font-bold">{Math.round((completedDays.size / 6) * 100)}%</p>
+                <p className="text-2xl font-bold">{days.length ? Math.round((completedDays.size / days.length) * 100) : 0}%</p>
                 <p className="text-[11px] text-white/60">Semana</p>
               </div>
             </div>
@@ -85,33 +101,34 @@ export default async function DashboardPage() {
         </div>
 
         {/* ─── Tarjeta de hoy ─── */}
-        <div className="px-5 -mt-0 pt-5">
-          <div className="bg-white rounded-3xl card-shadow p-5">
-            <div className="flex items-center justify-between mb-1">
-              <h2 className="font-bold text-[#0c1c2c]">Entrenamiento de hoy</h2>
-              <span className="text-xs text-[#5f7185]">{nextDay.exercises.length} ejercicios</span>
-            </div>
-            <p className="text-sm text-[#5f7185] mb-4">
-              Día {nextDay.day} · {nextDay.muscleGroup}{nextDay.extra ? ` · ${nextDay.extra}` : ""}
-            </p>
+        {nextDay && (
+          <div className="px-5 pt-5">
+            <div className="bg-white rounded-3xl card-shadow p-5">
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="font-bold text-[#0c1c2c]">Entrenamiento de hoy</h2>
+                <span className="text-xs text-[#5f7185]">{nextDay.exercises.length} ejercicios</span>
+              </div>
+              <p className="text-sm text-[#5f7185] mb-4">
+                Día {nextDay.day}{nextDay.extra ? ` · ${nextDay.extra}` : ""}
+              </p>
 
-            {/* Progress semanal */}
-            <div className="h-1.5 bg-[#e9eff6] rounded-full overflow-hidden mb-1.5">
-              <div
-                className="h-full rounded-full bg-[#14487a] transition-all"
-                style={{ width: `${(completedDays.size / 6) * 100}%` }}
-              />
-            </div>
-            <p className="text-xs text-[#5f7185] mb-4">{completedDays.size} de 6 días completados esta rutina</p>
+              <div className="h-1.5 bg-[#e9eff6] rounded-full overflow-hidden mb-1.5">
+                <div
+                  className="h-full rounded-full bg-[#14487a] transition-all"
+                  style={{ width: `${days.length ? (completedDays.size / days.length) * 100 : 0}%` }}
+                />
+              </div>
+              <p className="text-xs text-[#5f7185] mb-4">{completedDays.size} de {days.length} días completados</p>
 
-            <Link
-              href={`/day/${nextDay.day}`}
-              className="block w-full text-center rounded-2xl bg-[#0b3557] text-white font-semibold py-3.5 active:scale-[0.98] transition-transform"
-            >
-              Empezar entrenamiento
-            </Link>
+              <Link
+                href={`/day/${nextDay.day}`}
+                className="block w-full text-center rounded-2xl bg-[#0b3557] text-white font-semibold py-3.5 active:scale-[0.98] transition-transform"
+              >
+                Empezar entrenamiento
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ─── Lista de días ─── */}
         <div className="px-5 mt-7">
@@ -121,7 +138,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="space-y-3 pb-6">
-            {ROUTINE.map((day) => {
+            {days.map((day) => {
               const last = lastByDay.get(day.day);
               const done = completedDays.has(day.day);
               return (
