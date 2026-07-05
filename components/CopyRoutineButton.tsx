@@ -46,7 +46,7 @@ export default function CopyRoutineButton({
     const { data: sourceExercises } = dayIds.length
       ? await supabase
           .from("routine_exercises")
-          .select("day_id, name, sets, reps, image, tip, order_index")
+          .select("day_id, name, sets, reps, image, tip, order_index, exercise_id")
           .in("day_id", dayIds)
       : { data: [] };
 
@@ -87,6 +87,7 @@ export default function CopyRoutineButton({
               image: e.image,
               tip: e.tip,
               order_index: e.order_index,
+              exercise_id: e.exercise_id,
             }))
           );
         }

@@ -18,9 +18,15 @@ type ExerciseRow = {
   image: string;
   tip: string;
   order_index: number;
+  exercise_id: string | null;
 };
+type LibraryRow = { id: string; image: string; tip: string };
 
-function buildDays(dayRows: DayRow[], exerciseRows: ExerciseRow[]): RoutineDay[] {
+function buildDays(
+  dayRows: DayRow[],
+  exerciseRows: ExerciseRow[],
+  library: Map<string, LibraryRow>
+): RoutineDay[] {
   return dayRows
     .sort((a, b) => a.day_number - b.day_number)
     .map((d) => ({
@@ -34,13 +40,17 @@ function buildDays(dayRows: DayRow[], exerciseRows: ExerciseRow[]): RoutineDay[]
       exercises: exerciseRows
         .filter((e) => e.day_id === d.id)
         .sort((a, b) => a.order_index - b.order_index)
-        .map((e) => ({
-          name: e.name,
-          sets: e.sets,
-          reps: e.reps,
-          image: e.image,
-          tip: e.tip,
-        })),
+        .map((e) => {
+          const lib = e.exercise_id ? library.get(e.exercise_id) : undefined;
+          return {
+            name: e.name,
+            sets: e.sets,
+            reps: e.reps,
+            // La librería global tiene prioridad: una imagen/tip sirve para todos
+            image: lib?.image || e.image,
+            tip: lib?.tip || e.tip,
+          };
+        }),
     }));
 }
 
@@ -54,11 +64,22 @@ async function fetchRoutineContent(supabase: SupabaseClient, routineId: string) 
   const { data: exerciseRows } = dayIds.length
     ? await supabase
         .from("routine_exercises")
-        .select("day_id, name, sets, reps, image, tip, order_index")
+        .select("day_id, name, sets, reps, image, tip, order_index, exercise_id")
         .in("day_id", dayIds)
     : { data: [] };
 
-  return buildDays(dayRows ?? [], exerciseRows ?? []);
+  const libraryIds = Array.from(
+    new Set((exerciseRows ?? []).map((e) => e.exercise_id).filter(Boolean))
+  ) as string[];
+  const { data: libraryRows } = libraryIds.length
+    ? await supabase
+        .from("exercise_library")
+        .select("id, image, tip")
+        .in("id", libraryIds)
+    : { data: [] };
+  const library = new Map((libraryRows ?? []).map((l) => [l.id, l]));
+
+  return buildDays(dayRows ?? [], exerciseRows ?? [], library);
 }
 
 async function seedDefaultRoutine(
@@ -72,6 +93,14 @@ async function seedDefaultRoutine(
     .single();
 
   if (!routine) return null;
+
+  // IDs de la librería global para vincular
+  const allNames = ROUTINE.flatMap((d) => d.exercises.map((e) => e.name));
+  const { data: libRows } = await supabase
+    .from("exercise_library")
+    .select("id, name")
+    .in("name", allNames);
+  const libIdByName = new Map((libRows ?? []).map((l) => [l.name, l.id]));
 
   for (const day of ROUTINE) {
     const { data: dayRow } = await supabase
@@ -95,6 +124,7 @@ async function seedDefaultRoutine(
           image: ex.image,
           tip: ex.tip,
           order_index: i,
+          exercise_id: libIdByName.get(ex.name) ?? null,
         }))
       );
     }
