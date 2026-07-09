@@ -45,16 +45,16 @@ export default function HistoryView({ sessions, logs }: { sessions: Session[]; l
     <div className="space-y-6">
       {/* Chart */}
       {exerciseNames.length > 0 && (
-        <div className="rounded-3xl bg-white card-shadow p-4">
+        <div className="rounded-3xl bg-[#211b16] card-shadow p-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-xs text-[#8ba0b5] uppercase tracking-widest font-semibold">Progreso</p>
-              <h2 className="font-bold text-[#0c1c2c]">Evolución de peso</h2>
+              <p className="text-xs text-[#8a7f76] uppercase tracking-widest font-semibold">Progreso</p>
+              <h2 className="font-bold text-[#f2ede9]">Evolución de peso</h2>
             </div>
             <select
               value={selectedExercise}
               onChange={(e) => setSelectedExercise(e.target.value)}
-              className="rounded-xl bg-[#eef3f8] border border-[#dbe4ee] text-xs px-3 py-2 max-w-[150px] text-[#0c1c2c]"
+              className="rounded-xl bg-[#262019] border border-[#38302a] text-xs px-3 py-2 max-w-[150px] text-[#f2ede9]"
             >
               {exerciseNames.map((name) => (
                 <option key={name} value={name}>{name}</option>
@@ -66,19 +66,19 @@ export default function HistoryView({ sessions, logs }: { sessions: Session[]; l
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <CartesianGrid stroke="#e9eff6" strokeDasharray="3 3" />
-                  <XAxis dataKey="date" stroke="#9db0c3" fontSize={11} />
-                  <YAxis stroke="#9db0c3" fontSize={11} />
+                  <CartesianGrid stroke="#322a23" strokeDasharray="3 3" />
+                  <XAxis dataKey="date" stroke="#6f645b" fontSize={11} />
+                  <YAxis stroke="#6f645b" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ background: "#ffffff", border: "1px solid #e2e9f1", borderRadius: 12, color: "#0c1c2c" }}
+                    contentStyle={{ background: "#211b16", border: "1px solid #2e2721", borderRadius: 12, color: "#f2ede9" }}
                     formatter={(v) => [`${v} kg`, "Peso"]}
                   />
-                  <Line type="monotone" dataKey="peso" stroke="#0b3557" strokeWidth={2.5} dot={{ r: 4, fill: "#0b3557" }} />
+                  <Line type="monotone" dataKey="peso" stroke="#f97316" strokeWidth={2.5} dot={{ r: 4, fill: "#f97316" }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="text-sm text-[#8ba0b5] text-center py-8">
+            <p className="text-sm text-[#8a7f76] text-center py-8">
               Necesitás al menos 2 sesiones con este ejercicio para ver el progreso.
             </p>
           )}
@@ -87,25 +87,25 @@ export default function HistoryView({ sessions, logs }: { sessions: Session[]; l
 
       {/* Sessions list */}
       <div>
-        <p className="text-xs text-[#8ba0b5] uppercase tracking-widest font-semibold mb-3">
+        <p className="text-xs text-[#8a7f76] uppercase tracking-widest font-semibold mb-3">
           Historial de sesiones
         </p>
 
         {completedSessions.length === 0 ? (
-          <div className="rounded-3xl bg-white card-shadow p-8 text-center">
+          <div className="rounded-3xl bg-[#211b16] card-shadow p-8 text-center">
             <p className="text-2xl mb-2">🏋️</p>
-            <p className="text-[#5f7185] text-sm">Todavía no completaste ningún entrenamiento.</p>
+            <p className="text-[#a1968e] text-sm">Todavía no completaste ningún entrenamiento.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {sessions.map((s) => (
-              <div key={s.id} className="rounded-2xl bg-white card-shadow p-4 flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-[#eef3f8] flex items-center justify-center text-lg font-bold text-[#0b3557] flex-shrink-0">
+              <div key={s.id} className="rounded-2xl bg-[#211b16] card-shadow p-4 flex items-center gap-4">
+                <div className="w-11 h-11 rounded-2xl bg-[#262019] flex items-center justify-center text-lg font-bold text-[#f97316] flex-shrink-0">
                   {s.day_number}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate text-[#0c1c2c]">{s.day_title}</p>
-                  <p className="text-xs text-[#8ba0b5]">
+                  <p className="font-semibold text-sm truncate text-[#f2ede9]">{s.day_title}</p>
+                  <p className="text-xs text-[#8a7f76]">
                     {new Date(s.started_at).toLocaleDateString("es-AR", {
                       weekday: "long", day: "numeric", month: "short",
                     })}
@@ -116,7 +116,7 @@ export default function HistoryView({ sessions, logs }: { sessions: Session[]; l
                     <>
                       <p className="text-xs text-emerald-600 font-semibold">Completo</p>
                       {s.duration_minutes ? (
-                        <p className="text-xs text-[#9db0c3]">{s.duration_minutes} min</p>
+                        <p className="text-xs text-[#6f645b]">{s.duration_minutes} min</p>
                       ) : null}
                     </>
                   ) : (

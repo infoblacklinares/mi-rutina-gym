@@ -42,8 +42,8 @@ export default function FollowButton({
       disabled={busy}
       className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 ${
         following
-          ? "bg-white text-[#0b3557] border border-[#dbe4ee]"
-          : "bg-[#0b3557] text-white"
+          ? "bg-[#211b16] text-[#f97316] border border-[#38302a]"
+          : "bg-[#f97316] text-white"
       }`}
     >
       {following ? "Siguiendo ✓" : "Seguir"}

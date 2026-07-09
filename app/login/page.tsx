@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#0b3557] via-[#14487a] to-[#2a6db3]">
+    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#171310] via-[#1f1712] to-[#2c1c11]">
       {/* Athlete image */}
       <div className="absolute inset-0">
         <Image
@@ -38,7 +38,7 @@ export default function LoginPage() {
           unoptimized
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b3557] via-transparent to-[#0b3557]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#171310] via-transparent to-[#171310]/60" />
       </div>
 
       <div className="relative flex flex-col flex-1 px-6 pb-8">
@@ -75,7 +75,7 @@ export default function LoginPage() {
           <div className="space-y-3">
             <button
               onClick={() => setShowForm(true)}
-              className="w-full rounded-2xl bg-white text-[#0b3557] font-semibold text-base py-4 card-shadow"
+              className="w-full rounded-full bg-[#f97316] text-white font-bold text-base py-4 card-shadow"
             >
               EMPEZAR
             </button>
@@ -101,7 +101,7 @@ export default function LoginPage() {
             {error && <p className="text-red-300 text-sm text-center">{error}</p>}
             <button
               type="submit" disabled={loading}
-              className="w-full rounded-2xl bg-white text-[#0b3557] font-semibold text-base py-4 disabled:opacity-60 card-shadow"
+              className="w-full rounded-full bg-[#f97316] text-white font-bold text-base py-4 disabled:opacity-60 card-shadow"
             >
               {loading ? "Ingresando..." : "Ingresar"}
             </button>

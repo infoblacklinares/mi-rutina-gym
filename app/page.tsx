@@ -41,7 +41,7 @@ export default async function DashboardPage() {
     <>
       <main className="flex-1 max-w-lg w-full mx-auto">
         {/* ─── Hero navy ─── */}
-        <div className="relative overflow-hidden rounded-b-[32px]" style={{ background: "linear-gradient(160deg, #0b3557 0%, #14487a 60%, #2a6db3 100%)" }}>
+        <div className="relative overflow-hidden rounded-b-[32px]" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
           <Image
             src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"
             alt=""
@@ -105,26 +105,26 @@ export default async function DashboardPage() {
         {/* ─── Tarjeta de hoy ─── */}
         {nextDay && (
           <div className="px-5 pt-5">
-            <div className="bg-white rounded-3xl card-shadow p-5">
+            <div className="bg-[#211b16] rounded-3xl card-shadow p-5">
               <div className="flex items-center justify-between mb-1">
-                <h2 className="font-bold text-[#0c1c2c]">Entrenamiento de hoy</h2>
-                <span className="text-xs text-[#5f7185]">{nextDay.exercises.length} ejercicios</span>
+                <h2 className="font-bold text-[#f2ede9]">Entrenamiento de hoy</h2>
+                <span className="text-xs text-[#a1968e]">{nextDay.exercises.length} ejercicios</span>
               </div>
-              <p className="text-sm text-[#5f7185] mb-4">
+              <p className="text-sm text-[#a1968e] mb-4">
                 Día {nextDay.day}{nextDay.extra ? ` · ${nextDay.extra}` : ""}
               </p>
 
-              <div className="h-1.5 bg-[#e9eff6] rounded-full overflow-hidden mb-1.5">
+              <div className="h-1.5 bg-[#322a23] rounded-full overflow-hidden mb-1.5">
                 <div
-                  className="h-full rounded-full bg-[#14487a] transition-all"
+                  className="h-full rounded-full bg-[#ea580c] transition-all"
                   style={{ width: `${days.length ? (completedDays.size / days.length) * 100 : 0}%` }}
                 />
               </div>
-              <p className="text-xs text-[#5f7185] mb-4">{completedDays.size} de {days.length} días completados</p>
+              <p className="text-xs text-[#a1968e] mb-4">{completedDays.size} de {days.length} días completados</p>
 
               <Link
                 href={`/day/${nextDay.day}`}
-                className="block w-full text-center rounded-2xl bg-[#0b3557] text-white font-semibold py-3.5 active:scale-[0.98] transition-transform"
+                className="block w-full text-center rounded-2xl bg-[#f97316] text-white font-semibold py-3.5 active:scale-[0.98] transition-transform"
               >
                 Empezar entrenamiento
               </Link>
@@ -135,8 +135,8 @@ export default async function DashboardPage() {
         {/* ─── Lista de días ─── */}
         <div className="px-5 mt-7">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-[#0c1c2c]">Plan semanal</h2>
-            <Link href="/history" className="text-xs font-semibold text-[#2f6fed]">Ver progreso</Link>
+            <h2 className="font-bold text-[#f2ede9]">Plan semanal</h2>
+            <Link href="/history" className="text-xs font-semibold text-[#fb923c]">Ver progreso</Link>
           </div>
 
           <div className="space-y-3 pb-6">
@@ -147,21 +147,21 @@ export default async function DashboardPage() {
                 <Link
                   key={day.day}
                   href={`/day/${day.day}`}
-                  className="flex items-center gap-4 bg-white rounded-3xl card-shadow p-4 active:scale-[0.98] transition-transform"
+                  className="flex items-center gap-4 bg-[#211b16] rounded-3xl card-shadow p-4 active:scale-[0.98] transition-transform"
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-                    done ? "bg-[#0b3557] text-white" : "bg-[#eef3f8] text-[#0b3557]"
+                    done ? "bg-[#f97316] text-white" : "bg-[#262019] text-[#f97316]"
                   }`}>
                     {done ? "✓" : day.day}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[15px] text-[#0c1c2c]">{day.title}</p>
-                    <p className="text-xs text-[#5f7185] mt-0.5">
+                    <p className="font-semibold text-[15px] text-[#f2ede9]">{day.title}</p>
+                    <p className="text-xs text-[#a1968e] mt-0.5">
                       {day.exercises.length} ejercicios
                       {last && ` · ${new Date(last).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" })}`}
                     </p>
                   </div>
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#c3cfdc] flex-shrink-0">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#4a403a] flex-shrink-0">
                     <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
                   </svg>
                 </Link>

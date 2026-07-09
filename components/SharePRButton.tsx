@@ -16,9 +16,9 @@ export default function SharePRButton({ prs }: { prs: PR[] }) {
 
     // Fondo degradado navy
     const grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-    grad.addColorStop(0, "#0b3557");
-    grad.addColorStop(0.6, "#14487a");
-    grad.addColorStop(1, "#2a6db3");
+    grad.addColorStop(0, "#f97316");
+    grad.addColorStop(0.6, "#ea580c");
+    grad.addColorStop(1, "#f97316");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 1080, 1080);
 
@@ -79,7 +79,7 @@ export default function SharePRButton({ prs }: { prs: PR[] }) {
     <button
       onClick={share}
       disabled={busy}
-      className="w-full max-w-xs rounded-2xl bg-white text-[#0b3557] font-semibold py-4 text-base card-shadow disabled:opacity-50"
+      className="w-full max-w-xs rounded-2xl bg-[#211b16] text-[#f97316] font-semibold py-4 text-base card-shadow disabled:opacity-50"
     >
       {busy ? "Generando..." : "Compartir récord 📸"}
     </button>

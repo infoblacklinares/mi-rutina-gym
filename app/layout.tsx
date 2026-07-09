@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#eef3f8",
+  themeColor: "#161210",
 };
 
 export default function RootLayout({
@@ -33,7 +33,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#eef3f8] text-[#0c1c2c] pb-20">
+      <body className="min-h-full flex flex-col bg-[#161210] text-[#f2ede9] pb-20">
         <RegisterSW />
         {children}
       </body>

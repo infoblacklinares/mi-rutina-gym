@@ -4,8 +4,8 @@
   "description": "Rutina de gimnasio día a día con registro de progreso",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#161210",
+  "theme_color": "#161210",
   "icons": [
     {
       "src": "/icons/icon-192.png",

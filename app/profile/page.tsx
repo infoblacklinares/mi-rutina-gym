@@ -39,7 +39,7 @@ export default async function ProfilePage({
     <>
       <main className="flex-1 max-w-lg w-full mx-auto">
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-b-[32px] px-5 pt-12 pb-8 text-center" style={{ background: "linear-gradient(160deg, #0b3557 0%, #14487a 60%, #2a6db3 100%)" }}>
+        <div className="relative overflow-hidden rounded-b-[32px] px-5 pt-12 pb-8 text-center" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
           <div className="w-20 h-20 mx-auto rounded-full bg-white/15 border border-white/30 flex items-center justify-center text-white font-bold text-3xl capitalize mb-3">
             {profile?.username[0] ?? "?"}
           </div>
@@ -76,18 +76,18 @@ export default async function ProfilePage({
 
         {/* Buscador de usuarios */}
         <div className="px-5 pt-5">
-          <h2 className="font-bold text-[#0c1c2c] mb-3">Buscar amigos</h2>
+          <h2 className="font-bold text-[#f2ede9] mb-3">Buscar amigos</h2>
           <form method="GET" className="flex gap-2">
             <input
               type="text"
               name="q"
               defaultValue={q ?? ""}
               placeholder="Buscar por username..."
-              className="flex-1 rounded-2xl bg-white card-shadow px-4 py-3 text-sm text-[#0c1c2c] placeholder-[#9db0c3] outline-none focus:ring-2 focus:ring-[#0b3557]/20"
+              className="flex-1 rounded-2xl bg-[#211b16] card-shadow px-4 py-3 text-sm text-[#f2ede9] placeholder-[#6f645b] outline-none focus:ring-2 focus:ring-[#f97316]/20"
             />
             <button
               type="submit"
-              className="rounded-2xl bg-[#0b3557] text-white px-5 text-sm font-semibold"
+              className="rounded-2xl bg-[#f97316] text-white px-5 text-sm font-semibold"
             >
               Buscar
             </button>
@@ -96,7 +96,7 @@ export default async function ProfilePage({
           {q && (
             <div className="mt-4 space-y-2">
               {results.length === 0 ? (
-                <p className="text-sm text-[#8ba0b5] text-center py-4">
+                <p className="text-sm text-[#8a7f76] text-center py-4">
                   No se encontró a nadie con “{q}”.
                 </p>
               ) : (
@@ -104,13 +104,13 @@ export default async function ProfilePage({
                   <Link
                     key={p.id}
                     href={`/u/${p.username}`}
-                    className="flex items-center gap-3 bg-white rounded-2xl card-shadow p-3 active:scale-[0.98] transition-transform"
+                    className="flex items-center gap-3 bg-[#211b16] rounded-2xl card-shadow p-3 active:scale-[0.98] transition-transform"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#eef3f8] flex items-center justify-center font-bold text-[#0b3557] capitalize">
+                    <div className="w-10 h-10 rounded-full bg-[#262019] flex items-center justify-center font-bold text-[#f97316] capitalize">
                       {p.username[0]}
                     </div>
-                    <p className="font-semibold text-sm text-[#0c1c2c]">@{p.username}</p>
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#c3cfdc] ml-auto">
+                    <p className="font-semibold text-sm text-[#f2ede9]">@{p.username}</p>
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#4a403a] ml-auto">
                       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
                     </svg>
                   </Link>
@@ -122,13 +122,13 @@ export default async function ProfilePage({
 
         {/* Stats */}
         <div className="px-5 pt-5 grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-3xl card-shadow p-4 text-center">
-            <p className="text-3xl font-bold text-[#0b3557]">{stats.sessions}</p>
-            <p className="text-xs text-[#8ba0b5] mt-1">Entrenamientos</p>
+          <div className="bg-[#211b16] rounded-3xl card-shadow p-4 text-center">
+            <p className="text-3xl font-bold text-[#f97316]">{stats.sessions}</p>
+            <p className="text-xs text-[#8a7f76] mt-1">Entrenamientos</p>
           </div>
-          <div className="bg-white rounded-3xl card-shadow p-4 text-center">
-            <p className="text-3xl font-bold text-[#0b3557]">{stats.minutes}</p>
-            <p className="text-xs text-[#8ba0b5] mt-1">Minutos totales</p>
+          <div className="bg-[#211b16] rounded-3xl card-shadow p-4 text-center">
+            <p className="text-3xl font-bold text-[#f97316]">{stats.minutes}</p>
+            <p className="text-xs text-[#8a7f76] mt-1">Minutos totales</p>
           </div>
         </div>
 

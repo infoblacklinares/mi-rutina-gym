@@ -87,12 +87,12 @@ export default async function FeedPage() {
     <>
       <main className="flex-1 max-w-lg w-full mx-auto px-5 pt-8 pb-4">
         <div className="mb-5">
-          <p className="text-[#5f7185] text-sm">Tu comunidad</p>
-          <h1 className="text-2xl font-bold text-[#0c1c2c]">Feed</h1>
+          <p className="text-[#a1968e] text-sm">Tu comunidad</p>
+          <h1 className="text-2xl font-bold text-[#f2ede9]">Feed</h1>
         </div>
 
         {/* ─── Liga semanal ─── */}
-        <div className="rounded-3xl overflow-hidden card-shadow mb-5" style={{ background: "linear-gradient(160deg, #0b3557 0%, #14487a 100%)" }}>
+        <div className="rounded-3xl overflow-hidden card-shadow mb-5" style={{ background: "linear-gradient(160deg, #241a14 0%, #3a2315 100%)" }}>
           <div className="px-5 pt-4 pb-3 flex items-center justify-between">
             <div>
               <p className="text-white/60 text-[11px] uppercase tracking-widest font-semibold">Liga semanal</p>
@@ -127,12 +127,12 @@ export default async function FeedPage() {
 
         {/* ─── Actividad ─── */}
         {(sessions ?? []).length === 0 ? (
-          <div className="rounded-3xl bg-white card-shadow p-8 text-center">
+          <div className="rounded-3xl bg-[#211b16] card-shadow p-8 text-center">
             <p className="text-3xl mb-2">👥</p>
-            <p className="text-[#5f7185] text-sm mb-1">Tu feed está vacío.</p>
-            <p className="text-[#8ba0b5] text-xs">
+            <p className="text-[#a1968e] text-sm mb-1">Tu feed está vacío.</p>
+            <p className="text-[#8a7f76] text-xs">
               Entrená o seguí amigos desde tu{" "}
-              <Link href="/profile" className="text-[#2f6fed] font-semibold">perfil</Link>{" "}
+              <Link href="/profile" className="text-[#fb923c] font-semibold">perfil</Link>{" "}
               para ver actividad acá.
             </p>
           </div>
@@ -142,20 +142,20 @@ export default async function FeedPage() {
               const username = usernameOf.get(s.user_id) ?? "?";
               const isMe = s.user_id === user.id;
               return (
-                <div key={s.id} className="rounded-3xl bg-white card-shadow p-4">
+                <div key={s.id} className="rounded-3xl bg-[#211b16] card-shadow p-4">
                   <div className="flex items-center gap-3">
-                    <Link href={`/u/${username}`} className="w-10 h-10 rounded-full bg-[#eef3f8] flex items-center justify-center font-bold text-[#0b3557] capitalize flex-shrink-0">
+                    <Link href={`/u/${username}`} className="w-10 h-10 rounded-full bg-[#262019] flex items-center justify-center font-bold text-[#f97316] capitalize flex-shrink-0">
                       {username[0]}
                     </Link>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#0c1c2c]">
+                      <p className="text-sm text-[#f2ede9]">
                         <Link href={`/u/${username}`} className="font-bold">
                           {isMe ? "Vos" : `@${username}`}
                         </Link>{" "}
                         {isMe ? "completaste" : "completó"}{" "}
                         <span className="font-semibold">{s.day_title}</span> 💪
                       </p>
-                      <p className="text-xs text-[#8ba0b5] mt-0.5">
+                      <p className="text-xs text-[#8a7f76] mt-0.5">
                         {timeAgo(s.started_at)}
                         {s.duration_minutes ? ` · ${s.duration_minutes} min` : ""}
                       </p>
