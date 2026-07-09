@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import type { Exercise, RoutineDay } from "@/lib/routines";
+import type { RoutineDay } from "@/lib/routines";
 import type { LastSetData } from "@/app/day/[dayNumber]/page";
 import SharePRButton, { type PR } from "@/components/SharePRButton";
 
@@ -22,7 +22,7 @@ export default function WorkoutRunner({
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [preview, setPreview] = useState<Exercise | null>(null);
+  const [expanded, setExpanded] = useState<number | null>(null);
   const [prs, setPrs] = useState<PR[]>([]);
   const startedAt = useRef(Date.now());
 
@@ -188,9 +188,10 @@ export default function WorkoutRunner({
       {/* Lista de ejercicios con peso editable */}
       <div className="rounded-3xl bg-white card-shadow p-2">
         {day.exercises.map((ex, i) => (
-          <div key={ex.name} className="flex items-center gap-3 p-3">
+          <div key={ex.name}>
+          <div className="flex items-center gap-3 p-3">
             <button
-              onClick={() => setPreview(ex)}
+              onClick={() => setExpanded(expanded === i ? null : i)}
               className="flex items-center gap-3 flex-1 min-w-0 text-left active:opacity-60 transition-opacity"
             >
               <div className="w-9 h-9 rounded-xl bg-[#eef3f8] flex items-center justify-center text-sm font-bold text-[#0b3557] flex-shrink-0">
@@ -199,8 +200,12 @@ export default function WorkoutRunner({
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-[#0c1c2c] flex items-center gap-1.5">
                   {ex.name}
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-[#9db0c3] flex-shrink-0">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className={`w-3.5 h-3.5 text-[#9db0c3] flex-shrink-0 transition-transform ${expanded === i ? "rotate-180" : ""}`}
+                  >
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </p>
                 <p className="text-xs text-[#8ba0b5]">{ex.sets} × {ex.reps}</p>
@@ -224,6 +229,28 @@ export default function WorkoutRunner({
               <span className="text-xs font-semibold text-[#8ba0b5]">kg</span>
             </div>
           </div>
+
+          {/* Imagen expandida a todo el ancho */}
+          {expanded === i && (
+            <div className="px-2 pb-3">
+              {ex.image ? (
+                <Image
+                  src={ex.image}
+                  alt={ex.name}
+                  width={1200}
+                  height={675}
+                  className="w-full h-auto rounded-2xl"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full aspect-video rounded-2xl bg-[#f4f8fc] flex flex-col items-center justify-center gap-1 text-[#9db0c3]">
+                  <span className="text-4xl">🏋️</span>
+                  <span className="text-xs font-medium">Imagen próximamente</span>
+                </div>
+              )}
+            </div>
+          )}
+          </div>
         ))}
       </div>
 
@@ -244,47 +271,6 @@ export default function WorkoutRunner({
         {saving ? "Guardando..." : "Guardar entrenamiento"}
       </button>
 
-      {/* ─── Popup del ejercicio: la imagen protagonista ─── */}
-      {preview && (
-        <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
-          onClick={() => setPreview(null)}
-        >
-          {/* Cerrar */}
-          <button
-            onClick={() => setPreview(null)}
-            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          </button>
-
-          {/* Imagen a pantalla casi completa */}
-          <div className="relative flex-1 m-3 mb-0">
-            {preview.image ? (
-              <Image
-                src={preview.image}
-                alt={preview.name}
-                fill
-                className="object-contain"
-                unoptimized
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/50">
-                <span className="text-6xl">🏋️</span>
-                <span className="text-sm font-medium">Imagen próximamente</span>
-              </div>
-            )}
-          </div>
-
-          {/* Solo nombre y series, mínimo */}
-          <div className="px-6 py-5 text-center">
-            <p className="text-white font-bold text-lg leading-tight">{preview.name}</p>
-            <p className="text-white/60 text-sm mt-0.5">{preview.sets} × {preview.reps}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
