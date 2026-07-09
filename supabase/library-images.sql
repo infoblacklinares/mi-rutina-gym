@@ -1,5 +1,5 @@
 -- Enlaza cada imagen (subida al bucket 'ejercicios') con su ejercicio.
--- Correr en el SQL Editor de Supabase DESPUES de subir la carpeta ejercicios-webp al bucket.
+-- Correr en el SQL Editor de Supabase DESPUES de subir los .webp al bucket.
 -- Si tu bucket tiene otro nombre, reemplaza /ejercicios/ en las URLs.
 
 update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/press-inclinado-barra.webp' where name = 'Press inclinado barra';
@@ -37,6 +37,11 @@ update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/st
 update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/fondos-rodillas-al-pecho.webp' where name = 'Fondos + rodillas al pecho';
 update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/burpees.webp' where name = 'Burpees';
 update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/mountain-climbers.webp' where name = 'Mountain climbers';
+update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/press-banca-plano.webp' where name = 'Press banca plano';
+update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/press-inclinado-mancuerna.webp' where name = 'Press inclinado mancuerna';
+update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/copa-triceps-de-pie.webp' where name = 'Copa tríceps de pie';
+update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/extension-triceps-polea.webp' where name = 'Extensión tríceps polea';
+update exercise_library set image = 'https://fdhhloorqmrzkybdicpx.supabase.co/storage/v1/object/public/ejercicios/fondos-paralelas.webp' where name = 'Fondos paralelas';
 
 -- Ejercicio nuevo: Cardio (no existia en la libreria)
 insert into exercise_library (name, muscle_group, equipment, tip, image) values
