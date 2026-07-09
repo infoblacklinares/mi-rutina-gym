@@ -254,14 +254,21 @@ export default function WorkoutRunner({
             className="w-full max-w-sm bg-white rounded-3xl overflow-hidden card-shadow"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full aspect-[4/3] bg-[#dbe5ef]">
-              <Image
-                src={preview.image}
-                alt={preview.name}
-                fill
-                className="object-cover"
-                unoptimized
-              />
+            <div className="relative w-full aspect-[4/3] bg-[#f4f8fc]">
+              {preview.image ? (
+                <Image
+                  src={preview.image}
+                  alt={preview.name}
+                  fill
+                  className="object-contain p-2"
+                  unoptimized
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#9db0c3]">
+                  <span className="text-5xl">🏋️</span>
+                  <span className="text-xs font-medium">Imagen próximamente</span>
+                </div>
+              )}
               <button
                 onClick={() => setPreview(null)}
                 className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"

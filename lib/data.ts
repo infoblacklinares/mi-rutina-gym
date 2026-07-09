@@ -42,12 +42,14 @@ function buildDays(
         .sort((a, b) => a.order_index - b.order_index)
         .map((e) => {
           const lib = e.exercise_id ? library.get(e.exercise_id) : undefined;
+          // Los placeholders viejos (picsum) cuentan como "sin imagen"
+          const localImage = e.image.includes("picsum.photos") ? "" : e.image;
           return {
             name: e.name,
             sets: e.sets,
             reps: e.reps,
             // La librería global tiene prioridad: una imagen/tip sirve para todos
-            image: lib?.image || e.image,
+            image: lib?.image || localImage,
             tip: lib?.tip || e.tip,
           };
         }),
