@@ -244,54 +244,44 @@ export default function WorkoutRunner({
         {saving ? "Guardando..." : "Guardar entrenamiento"}
       </button>
 
-      {/* ─── Popup del ejercicio ─── */}
+      {/* ─── Popup del ejercicio: la imagen protagonista ─── */}
       {preview && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
           onClick={() => setPreview(null)}
         >
-          <div
-            className="w-full max-w-sm bg-white rounded-3xl overflow-hidden card-shadow"
-            onClick={(e) => e.stopPropagation()}
+          {/* Cerrar */}
+          <button
+            onClick={() => setPreview(null)}
+            className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white"
           >
-            <div className="relative w-full aspect-[4/3] bg-[#f4f8fc]">
-              {preview.image ? (
-                <Image
-                  src={preview.image}
-                  alt={preview.name}
-                  fill
-                  className="object-contain p-2"
-                  unoptimized
-                />
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#9db0c3]">
-                  <span className="text-5xl">🏋️</span>
-                  <span className="text-xs font-medium">Imagen próximamente</span>
-                </div>
-              )}
-              <button
-                onClick={() => setPreview(null)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-              </button>
-            </div>
-            <div className="p-5">
-              <h3 className="font-bold text-lg text-[#0c1c2c]">{preview.name}</h3>
-              <p className="text-sm text-[#8ba0b5] mt-0.5">{preview.sets} series × {preview.reps} reps</p>
-              <div className="mt-3 rounded-2xl bg-[#f4f8fc] px-4 py-3 flex items-start gap-2">
-                <span className="text-base">💡</span>
-                <p className="text-sm text-[#5f7185] leading-relaxed">{preview.tip}</p>
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+
+          {/* Imagen a pantalla casi completa */}
+          <div className="relative flex-1 m-3 mb-0">
+            {preview.image ? (
+              <Image
+                src={preview.image}
+                alt={preview.name}
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/50">
+                <span className="text-6xl">🏋️</span>
+                <span className="text-sm font-medium">Imagen próximamente</span>
               </div>
-              <button
-                onClick={() => setPreview(null)}
-                className="w-full mt-4 rounded-2xl bg-[#0b3557] text-white font-semibold py-3 text-sm"
-              >
-                Entendido
-              </button>
-            </div>
+            )}
+          </div>
+
+          {/* Solo nombre y series, mínimo */}
+          <div className="px-6 py-5 text-center">
+            <p className="text-white font-bold text-lg leading-tight">{preview.name}</p>
+            <p className="text-white/60 text-sm mt-0.5">{preview.sets} × {preview.reps}</p>
           </div>
         </div>
       )}
