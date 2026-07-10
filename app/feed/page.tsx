@@ -85,14 +85,14 @@ export default async function FeedPage() {
 
   return (
     <>
-      <main className="flex-1 max-w-lg w-full mx-auto px-5 pt-8 pb-4">
+      <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto px-5 pt-8 pb-4">
         <div className="mb-5">
           <p className="text-[#a1968e] text-sm">Tu comunidad</p>
           <h1 className="text-2xl font-bold text-[#f2ede9]">Feed</h1>
         </div>
 
         {/* ─── Liga semanal ─── */}
-        <div className="rounded-3xl overflow-hidden card-shadow mb-5" style={{ background: "linear-gradient(160deg, #241a14 0%, #3a2315 100%)" }}>
+        <div className="rounded-3xl overflow-hidden card-shadow mb-5 anim-rise" style={{ background: "linear-gradient(160deg, #241a14 0%, #3a2315 100%)" }}>
           <div className="px-5 pt-4 pb-3 flex items-center justify-between">
             <div>
               <p className="text-white/60 text-[11px] uppercase tracking-widest font-semibold">Liga semanal</p>
@@ -142,7 +142,7 @@ export default async function FeedPage() {
               const username = usernameOf.get(s.user_id) ?? "?";
               const isMe = s.user_id === user.id;
               return (
-                <div key={s.id} className="rounded-3xl bg-[#211b16] card-shadow p-4">
+                <div key={s.id} className="rounded-3xl bg-[#211b16] card-shadow card-hover p-4 anim-rise">
                   <div className="flex items-center gap-3">
                     <Link href={`/u/${username}`} className="w-10 h-10 rounded-full bg-[#262019] flex items-center justify-center font-bold text-[#f97316] capitalize flex-shrink-0">
                       {username[0]}

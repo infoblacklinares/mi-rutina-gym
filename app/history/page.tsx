@@ -18,7 +18,7 @@ export default async function HistoryPage() {
 
   return (
     <>
-      <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-6 pb-4">
+      <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto px-4 pt-6 pb-4">
         <div className="mb-6">
           <p className="text-[#a1968e] text-sm">Tu progreso</p>
           <h1 className="text-2xl font-bold text-[#f2ede9]">Historial</h1>

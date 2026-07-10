@@ -37,7 +37,7 @@ export default async function ProfilePage({
 
   return (
     <>
-      <main className="flex-1 max-w-lg w-full mx-auto">
+      <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto">
         {/* Hero */}
         <div className="relative overflow-hidden rounded-b-[32px] px-5 pt-12 pb-8 text-center" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
           <div className="w-20 h-20 mx-auto rounded-full bg-white/15 border border-white/30 flex items-center justify-center text-white font-bold text-3xl capitalize mb-3">

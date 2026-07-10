@@ -18,7 +18,7 @@ export default async function SharedRoutinePage({
   const totalExercises = routine.days.reduce((acc, d) => acc + d.exercises.length, 0);
 
   return (
-    <main className="flex-1 max-w-lg w-full mx-auto">
+    <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto">
       {/* Hero */}
       <div className="relative overflow-hidden rounded-b-[32px] px-5 pt-12 pb-8" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
         <div className="flex items-center gap-2 mb-8">

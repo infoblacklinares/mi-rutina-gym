@@ -186,7 +186,7 @@ export default function WorkoutRunner({
       </button>
 
       {/* Lista de ejercicios con peso editable */}
-      <div className="rounded-3xl bg-[#211b16] card-shadow p-2">
+      <div className="rounded-3xl bg-[#211b16] card-shadow p-2 anim-rise" style={{ animationDelay: "0.08s" }}>
         {day.exercises.map((ex, i) => (
           <div key={ex.name}>
           <div className="flex items-center gap-3 p-3">
@@ -232,7 +232,7 @@ export default function WorkoutRunner({
 
           {/* Imagen expandida a todo el ancho */}
           {expanded === i && (
-            <div className="px-2 pb-3">
+            <div className="px-2 pb-3 anim-rise">
               {ex.image ? (
                 <Image
                   src={ex.image}

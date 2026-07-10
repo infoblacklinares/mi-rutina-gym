@@ -45,3 +45,34 @@ input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .card-shadow {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 }
+
+/* ─── Animaciones ─── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.anim-rise { animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.anim-pop { animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes flame {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50%      { transform: scale(1.18) rotate(3deg); }
+}
+.anim-flame { display: inline-block; animation: flame 1.6s ease-in-out infinite; }
+
+/* Hover solo donde hay mouse (desktop) */
+.card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+@media (hover: hover) {
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.6);
+  }
+}
+
+button, a { transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.2s ease; }

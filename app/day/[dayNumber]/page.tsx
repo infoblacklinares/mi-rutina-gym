@@ -37,7 +37,7 @@ export default async function DayPage({
   }
 
   return (
-    <main className="flex-1 max-w-lg w-full mx-auto px-4 pt-4 pb-6">
+    <main className="flex-1 max-w-lg md:max-w-xl w-full mx-auto px-4 pt-4 pb-6">
       <WorkoutRunner day={day} userId={user.id} lastSets={lastSets} />
     </main>
   );
