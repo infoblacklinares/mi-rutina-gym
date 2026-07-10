@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import GoogleButton from "@/components/GoogleButton";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -55,6 +56,13 @@ export default function SignupPage() {
             </Link>
           </div>
         ) : (
+          <div className="space-y-3">
+          <GoogleButton />
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-white/15" />
+            <span className="text-white/40 text-xs">o con email</span>
+            <div className="flex-1 h-px bg-white/15" />
+          </div>
           <form onSubmit={handleSubmit} className="space-y-3">
             <input
               type="email" required placeholder="Email"
@@ -74,6 +82,7 @@ export default function SignupPage() {
               {loading ? "Creando..." : "Crear cuenta"}
             </button>
           </form>
+          </div>
         )}
       </div>
     </main>

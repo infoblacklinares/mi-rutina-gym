@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import GoogleButton from "@/components/GoogleButton";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -73,11 +74,12 @@ export default function LoginPage() {
 
         {!showForm ? (
           <div className="space-y-3">
+            <GoogleButton />
             <button
               onClick={() => setShowForm(true)}
               className="w-full rounded-full bg-[#f97316] text-white font-bold text-base py-4 card-shadow"
             >
-              EMPEZAR
+              Entrar con email
             </button>
             <Link
               href="/signup"
