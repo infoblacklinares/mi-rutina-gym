@@ -116,25 +116,25 @@ export default function WorkoutRunner({
   if (saved) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] text-center gap-6 px-4">
-        <div className="w-24 h-24 rounded-full bg-[#f97316]/10 flex items-center justify-center text-5xl">
+        <div className="w-24 h-24 rounded-full bg-[#2dd4bf]/10 flex items-center justify-center text-5xl">
           {prs.length > 0 ? "🏆" : "💪"}
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-[#f2ede9]">
+          <h2 className="text-3xl font-bold text-[#f8fafc]">
             {prs.length > 0 ? "¡Nuevo récord!" : "¡Gran sesión!"}
           </h2>
-          <p className="text-[#a1968e] mt-2">Día {day.day} — {day.title}</p>
+          <p className="text-[#9aa7b2] mt-2">Día {day.day} — {day.title}</p>
         </div>
 
         {prs.length > 0 && (
           <div className="w-full max-w-xs space-y-2">
             {prs.map((pr) => (
-              <div key={pr.name} className="rounded-2xl bg-[#211b16] card-shadow px-4 py-3 flex items-center justify-between">
+              <div key={pr.name} className="rounded-2xl glass card-shadow px-4 py-3 flex items-center justify-between">
                 <div className="text-left">
-                  <p className="font-semibold text-sm text-[#f2ede9]">{pr.name}</p>
-                  <p className="text-xs text-[#8a7f76]">antes {pr.prev} kg</p>
+                  <p className="font-semibold text-sm text-[#f8fafc]">{pr.name}</p>
+                  <p className="text-xs text-[#7d8a95]">antes {pr.prev} kg</p>
                 </div>
-                <p className="font-bold text-lg text-[#f97316]">{pr.weight} kg 🎉</p>
+                <p className="font-bold text-lg text-[#2dd4bf]">{pr.weight} kg 🎉</p>
               </div>
             ))}
           </div>
@@ -142,7 +142,7 @@ export default function WorkoutRunner({
 
         {prs.length > 0 && <SharePRButton prs={prs} />}
 
-        <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-[#f97316] text-white font-semibold py-4 text-base card-shadow">
+        <button onClick={() => router.push("/")} className="w-full max-w-xs rounded-2xl bg-[#2dd4bf] text-[#04211c] font-semibold py-4 text-base card-shadow">
           Volver al inicio
         </button>
       </div>
@@ -154,14 +154,14 @@ export default function WorkoutRunner({
     <div className="flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center gap-3 pt-2">
-        <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl bg-[#211b16] card-shadow flex items-center justify-center flex-shrink-0">
-          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#f97316]">
+        <button onClick={() => router.push("/")} className="w-9 h-9 rounded-xl glass card-shadow flex items-center justify-center flex-shrink-0">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#2dd4bf]">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
           </svg>
         </button>
         <div>
-          <p className="text-xs text-[#8a7f76] font-semibold">DÍA {day.day}</p>
-          <h1 className="font-bold text-lg text-[#f2ede9] leading-tight">{day.title}</h1>
+          <p className="text-xs text-[#7d8a95] font-semibold">DÍA {day.day}</p>
+          <h1 className="font-bold text-lg text-[#f8fafc] leading-tight">{day.title}</h1>
         </div>
       </div>
 
@@ -169,24 +169,24 @@ export default function WorkoutRunner({
       <button
         onClick={toggleChrono}
         className={`w-full rounded-2xl card-shadow py-3 px-4 flex items-center justify-between transition-colors ${
-          chronoRunning ? "bg-[#f97316]" : "bg-[#211b16]"
+          chronoRunning ? "bg-[#2dd4bf]" : "glass"
         }`}
       >
         <div className="flex items-center gap-3">
-          <svg viewBox="0 0 24 24" fill="currentColor" className={`w-5 h-5 ${chronoRunning ? "text-white" : "text-[#f97316]"}`}>
+          <svg viewBox="0 0 24 24" fill="currentColor" className={`w-5 h-5 ${chronoRunning ? "text-white" : "text-[#2dd4bf]"}`}>
             <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0 0 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
           </svg>
-          <span className={`text-sm font-semibold ${chronoRunning ? "text-white/80" : "text-[#a1968e]"}`}>
+          <span className={`text-sm font-semibold ${chronoRunning ? "text-white/80" : "text-[#9aa7b2]"}`}>
             {chronoRunning ? "Descansando..." : "Cronómetro de descanso"}
           </span>
         </div>
-        <span className={`text-2xl font-bold tabular-nums ${chronoRunning ? "text-white" : "text-[#f97316]"}`}>
+        <span className={`text-2xl font-bold tabular-nums ${chronoRunning ? "text-white" : "text-[#2dd4bf]"}`}>
           {chronoRunning ? fmt(chronoSeconds) : "▶"}
         </span>
       </button>
 
       {/* Lista de ejercicios con peso editable */}
-      <div className="rounded-3xl bg-[#211b16] card-shadow p-2 anim-rise" style={{ animationDelay: "0.08s" }}>
+      <div className="rounded-3xl glass card-shadow p-2 anim-rise" style={{ animationDelay: "0.08s" }}>
         {day.exercises.map((ex, i) => (
           <div key={ex.name}>
           <div className="flex items-center gap-3 p-3">
@@ -194,21 +194,21 @@ export default function WorkoutRunner({
               onClick={() => setExpanded(expanded === i ? null : i)}
               className="flex items-center gap-3 flex-1 min-w-0 text-left active:opacity-60 transition-opacity"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#262019] flex items-center justify-center text-sm font-bold text-[#f97316] flex-shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-sm font-bold text-[#2dd4bf] flex-shrink-0">
                 {i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-[#f2ede9] flex items-center gap-1.5">
+                <p className="font-semibold text-sm text-[#f8fafc] flex items-center gap-1.5">
                   {ex.name}
                   <svg
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className={`w-3.5 h-3.5 text-[#6f645b] flex-shrink-0 transition-transform ${expanded === i ? "rotate-180" : ""}`}
+                    className={`w-3.5 h-3.5 text-[#5d6a75] flex-shrink-0 transition-transform ${expanded === i ? "rotate-180" : ""}`}
                   >
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </p>
-                <p className="text-xs text-[#8a7f76]">{ex.sets} × {ex.reps}</p>
+                <p className="text-xs text-[#7d8a95]">{ex.sets} × {ex.reps}</p>
               </div>
             </button>
             <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -224,9 +224,9 @@ export default function WorkoutRunner({
                     return next;
                   })
                 }
-                className="w-16 rounded-xl bg-[#262019] border border-[#38302a] px-2 py-2 text-base font-bold text-center text-[#f2ede9] outline-none focus:border-[#f97316] transition-colors"
+                className="w-16 rounded-xl bg-white/5 border border-white/10 px-2 py-2 text-base font-bold text-center text-[#f8fafc] outline-none focus:border-[#2dd4bf] transition-colors"
               />
-              <span className="text-xs font-semibold text-[#8a7f76]">kg</span>
+              <span className="text-xs font-semibold text-[#7d8a95]">kg</span>
             </div>
           </div>
 
@@ -243,7 +243,7 @@ export default function WorkoutRunner({
                   unoptimized
                 />
               ) : (
-                <div className="w-full aspect-video rounded-2xl bg-[#262019] flex flex-col items-center justify-center gap-1 text-[#6f645b]">
+                <div className="w-full aspect-video rounded-2xl bg-white/5 flex flex-col items-center justify-center gap-1 text-[#5d6a75]">
                   <span className="text-4xl">🏋️</span>
                   <span className="text-xs font-medium">Imagen próximamente</span>
                 </div>
@@ -266,7 +266,7 @@ export default function WorkoutRunner({
       <button
         onClick={saveWorkout}
         disabled={saving}
-        className="w-full rounded-2xl bg-[#f97316] text-white font-semibold py-4 text-base card-shadow active:scale-[0.98] transition-transform disabled:opacity-50 mb-4"
+        className="w-full rounded-2xl bg-[#2dd4bf] text-[#04211c] font-semibold py-4 text-base card-shadow active:scale-[0.98] transition-transform disabled:opacity-50 mb-4"
       >
         {saving ? "Guardando..." : "Guardar entrenamiento"}
       </button>

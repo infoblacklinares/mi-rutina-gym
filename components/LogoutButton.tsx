@@ -16,7 +16,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={logout}
-      className="w-full rounded-2xl bg-[#211b16] card-shadow py-3.5 text-sm font-semibold text-red-500"
+      className="w-full rounded-2xl glass card-shadow py-3.5 text-sm font-semibold text-red-500"
     >
       Cerrar sesión
     </button>

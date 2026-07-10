@@ -87,12 +87,12 @@ export default async function FeedPage() {
     <>
       <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto px-5 pt-8 pb-4">
         <div className="mb-5">
-          <p className="text-[#a1968e] text-sm">Tu comunidad</p>
-          <h1 className="text-2xl font-bold text-[#f2ede9]">Feed</h1>
+          <p className="text-[#9aa7b2] text-sm">Tu comunidad</p>
+          <h1 className="text-2xl font-bold text-[#f8fafc]">Feed</h1>
         </div>
 
         {/* ─── Liga semanal ─── */}
-        <div className="rounded-3xl overflow-hidden card-shadow mb-5 anim-rise" style={{ background: "linear-gradient(160deg, #241a14 0%, #3a2315 100%)" }}>
+        <div className="rounded-3xl overflow-hidden card-shadow mb-5 anim-rise glass" style={{ background: "linear-gradient(160deg, rgba(45,212,191,0.18) 0%, rgba(10,15,20,0.4) 100%)" }}>
           <div className="px-5 pt-4 pb-3 flex items-center justify-between">
             <div>
               <p className="text-white/60 text-[11px] uppercase tracking-widest font-semibold">Liga semanal</p>
@@ -127,12 +127,12 @@ export default async function FeedPage() {
 
         {/* ─── Actividad ─── */}
         {(sessions ?? []).length === 0 ? (
-          <div className="rounded-3xl bg-[#211b16] card-shadow p-8 text-center">
+          <div className="rounded-3xl glass card-shadow p-8 text-center">
             <p className="text-3xl mb-2">👥</p>
-            <p className="text-[#a1968e] text-sm mb-1">Tu feed está vacío.</p>
-            <p className="text-[#8a7f76] text-xs">
+            <p className="text-[#9aa7b2] text-sm mb-1">Tu feed está vacío.</p>
+            <p className="text-[#7d8a95] text-xs">
               Entrená o seguí amigos desde tu{" "}
-              <Link href="/profile" className="text-[#fb923c] font-semibold">perfil</Link>{" "}
+              <Link href="/profile" className="text-[#5eead4] font-semibold">perfil</Link>{" "}
               para ver actividad acá.
             </p>
           </div>
@@ -142,20 +142,20 @@ export default async function FeedPage() {
               const username = usernameOf.get(s.user_id) ?? "?";
               const isMe = s.user_id === user.id;
               return (
-                <div key={s.id} className="rounded-3xl bg-[#211b16] card-shadow card-hover p-4 anim-rise">
+                <div key={s.id} className="rounded-3xl glass card-shadow card-hover p-4 anim-rise">
                   <div className="flex items-center gap-3">
-                    <Link href={`/u/${username}`} className="w-10 h-10 rounded-full bg-[#262019] flex items-center justify-center font-bold text-[#f97316] capitalize flex-shrink-0">
+                    <Link href={`/u/${username}`} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-bold text-[#2dd4bf] capitalize flex-shrink-0">
                       {username[0]}
                     </Link>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#f2ede9]">
+                      <p className="text-sm text-[#f8fafc]">
                         <Link href={`/u/${username}`} className="font-bold">
                           {isMe ? "Vos" : `@${username}`}
                         </Link>{" "}
                         {isMe ? "completaste" : "completó"}{" "}
                         <span className="font-semibold">{s.day_title}</span> 💪
                       </p>
-                      <p className="text-xs text-[#8a7f76] mt-0.5">
+                      <p className="text-xs text-[#7d8a95] mt-0.5">
                         {timeAgo(s.started_at)}
                         {s.duration_minutes ? ` · ${s.duration_minutes} min` : ""}
                       </p>

@@ -25,13 +25,13 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#171310] via-[#1f1712] to-[#2c1c11]">
+    <main className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-[#0a0f14] via-[#0d141b] to-[#10312a]">
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=90"
           alt="Atleta" fill className="object-cover object-center opacity-30 mix-blend-luminosity" unoptimized priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#171310] via-transparent to-[#171310]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f14] via-transparent to-[#0a0f14]/60" />
       </div>
 
       <div className="relative flex flex-col flex-1 px-6 pb-8">
@@ -77,7 +77,7 @@ export default function SignupPage() {
             {error && <p className="text-red-300 text-sm text-center">{error}</p>}
             <button
               type="submit" disabled={loading}
-              className="w-full rounded-full bg-[#f97316] text-white font-bold text-base py-4 disabled:opacity-60 card-shadow"
+              className="w-full rounded-full bg-[#2dd4bf] text-[#04211c] font-bold text-base py-4 disabled:opacity-60 card-shadow"
             >
               {loading ? "Creando..." : "Crear cuenta"}
             </button>

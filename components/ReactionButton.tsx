@@ -41,8 +41,8 @@ export default function ReactionButton({
       onClick={toggle}
       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold transition-all active:scale-90 flex-shrink-0 ${
         reacted
-          ? "bg-[#f97316] text-white"
-          : "bg-[#262019] text-[#a1968e]"
+          ? "bg-[#2dd4bf] text-[#04211c]"
+          : "bg-white/5 text-[#9aa7b2]"
       }`}
     >
       💪 {count > 0 && <span className="text-xs">{count}</span>}

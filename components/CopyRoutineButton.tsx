@@ -104,7 +104,7 @@ export default function CopyRoutineButton({
       <button
         onClick={copyRoutine}
         disabled={copying}
-        className="w-full rounded-2xl bg-[#f97316] text-white font-semibold py-4 text-base card-shadow active:scale-[0.98] transition-transform disabled:opacity-50"
+        className="w-full rounded-2xl bg-[#2dd4bf] text-[#04211c] font-semibold py-4 text-base card-shadow active:scale-[0.98] transition-transform disabled:opacity-50"
       >
         {copying ? "Copiando..." : loggedIn ? "Copiar a mi cuenta 💪" : "Crear cuenta y usar esta rutina"}
       </button>

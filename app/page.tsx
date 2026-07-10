@@ -79,7 +79,7 @@ export default async function DashboardPage() {
     <>
       <main className="flex-1 max-w-lg md:max-w-4xl w-full mx-auto">
         {/* ─── Hero ─── */}
-        <div className="relative overflow-hidden rounded-b-[32px] md:rounded-3xl md:mt-6 md:mx-5 anim-rise" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
+        <div className="relative overflow-hidden rounded-b-[32px] glass md:rounded-3xl md:mt-6 md:mx-5 anim-rise" style={{ background: "linear-gradient(160deg, rgba(45,212,191,0.16) 0%, rgba(10,15,20,0.5) 55%, rgba(94,234,212,0.08) 100%)" }}>
           <Image
             src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=80"
             alt=""
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
           <div className="relative px-5 md:px-8 pt-12 md:pt-8 pb-6">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2">
-                <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#f97316]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#2dd4bf]" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <circle cx="12" cy="12" r="9" />
                   <path d="M12 3c3 3 3 15 0 18M3 12h18" strokeLinecap="round" />
                 </svg>
@@ -98,9 +98,9 @@ export default async function DashboardPage() {
               </div>
               <div className="flex items-center gap-2">
                 {streak > 0 && (
-                  <div className="flex items-center gap-1 rounded-full bg-[#f97316]/20 border border-[#f97316]/40 px-3 py-1.5 anim-pop">
+                  <div className="flex items-center gap-1 rounded-full bg-[#2dd4bf]/20 border border-[#2dd4bf]/40 px-3 py-1.5 anim-pop">
                     <span className="text-sm anim-flame">🔥</span>
-                    <span className="text-[#fb923c] text-xs font-bold">{streak}</span>
+                    <span className="text-[#5eead4] text-xs font-bold">{streak}</span>
                   </div>
                 )}
                 <Link href="/profile" className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white font-semibold text-sm capitalize hover:bg-white/20">
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
               <div className="flex-1">
                 <p className="text-white/50 text-sm capitalize">{greeting()}, {username}</p>
                 <h1 className="text-white text-3xl md:text-4xl font-bold tracking-tight mt-1 mb-4">
-                  {nextDay ? <>Hoy: <span className="text-[#f97316]">{nextDay.title}</span></> : "Tu rutina"}
+                  {nextDay ? <>Hoy: <span className="text-[#2dd4bf]">{nextDay.title}</span></> : "Tu rutina"}
                 </h1>
                 {routine && <div className="mb-6"><ShareButton shareCode={routine.shareCode} /></div>}
               </div>
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
               <div className="rounded-2xl bg-black/25 border border-white/10 p-3 md:min-w-[300px] mb-5 md:mb-0">
                 <div className="flex items-center justify-between mb-2 px-1">
                   <p className="text-[10px] text-white/50 uppercase tracking-widest font-semibold">Esta semana</p>
-                  <p className="text-[10px] text-[#fb923c] font-bold">{trainedThisWeek}/7 días</p>
+                  <p className="text-[10px] text-[#5eead4] font-bold">{trainedThisWeek}/7 días</p>
                 </div>
                 <div className="flex justify-between">
                   {week.map((d) => (
@@ -130,9 +130,9 @@ export default async function DashboardPage() {
                       <span className="text-[9px] text-white/40 font-semibold">{d.label}</span>
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                         d.trained
-                          ? "bg-[#f97316] text-white"
+                          ? "bg-[#2dd4bf] text-[#04211c]"
                           : d.isToday
-                          ? "border border-[#f97316] text-[#fb923c]"
+                          ? "border border-[#2dd4bf] text-[#5eead4]"
                           : "bg-white/5 text-white/40"
                       }`}>
                         {d.trained ? "✓" : d.date}
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
                 <p className="text-[11px] text-white/50">Minutos</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#fb923c]">{days.length ? Math.round((completedDays.size / days.length) * 100) : 0}%</p>
+                <p className="text-2xl font-bold text-[#5eead4]">{days.length ? Math.round((completedDays.size / days.length) * 100) : 0}%</p>
                 <p className="text-[11px] text-white/50">Rutina</p>
               </div>
             </div>
@@ -171,26 +171,26 @@ export default async function DashboardPage() {
           {/* Tarjeta de hoy */}
           {nextDay && (
             <div className="px-5 md:px-0 pt-5 md:pt-0 anim-rise" style={{ animationDelay: "0.08s" }}>
-              <div className="bg-[#211b16] rounded-3xl card-shadow card-hover p-5 md:sticky md:top-6">
+              <div className="glass rounded-3xl card-shadow card-hover p-5 md:sticky md:top-6">
                 <div className="flex items-center justify-between mb-1">
-                  <h2 className="font-bold text-[#f2ede9]">Entrenamiento de hoy</h2>
-                  <span className="text-xs text-[#a1968e]">{nextDay.exercises.length} ejercicios</span>
+                  <h2 className="font-bold text-[#f8fafc]">Entrenamiento de hoy</h2>
+                  <span className="text-xs text-[#9aa7b2]">{nextDay.exercises.length} ejercicios</span>
                 </div>
-                <p className="text-sm text-[#a1968e] mb-4">
+                <p className="text-sm text-[#9aa7b2] mb-4">
                   Día {nextDay.day}{nextDay.extra ? ` · ${nextDay.extra}` : ""}
                 </p>
 
-                <div className="h-1.5 bg-[#322a23] rounded-full overflow-hidden mb-1.5">
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mb-1.5">
                   <div
-                    className="h-full rounded-full bg-[#f97316] transition-all duration-700"
+                    className="h-full rounded-full bg-[#2dd4bf] transition-all duration-700"
                     style={{ width: `${days.length ? (completedDays.size / days.length) * 100 : 0}%` }}
                   />
                 </div>
-                <p className="text-xs text-[#a1968e] mb-4">{completedDays.size} de {days.length} días completados</p>
+                <p className="text-xs text-[#9aa7b2] mb-4">{completedDays.size} de {days.length} días completados</p>
 
                 <Link
                   href={`/day/${nextDay.day}`}
-                  className="block w-full text-center rounded-full bg-[#f97316] text-white font-bold py-3.5 active:scale-[0.98] hover:bg-[#fb923c]"
+                  className="block w-full text-center rounded-full bg-[#2dd4bf] text-[#04211c] font-bold py-3.5 active:scale-[0.98] hover:bg-[#5eead4]"
                 >
                   Empezar entrenamiento →
                 </Link>
@@ -201,8 +201,8 @@ export default async function DashboardPage() {
           {/* Plan semanal */}
           <div className="px-5 md:px-0 mt-7 md:mt-0">
             <div className="flex items-center justify-between mb-3 anim-rise" style={{ animationDelay: "0.12s" }}>
-              <h2 className="font-bold text-[#f2ede9]">Plan semanal</h2>
-              <Link href="/history" className="text-xs font-semibold text-[#fb923c] hover:underline">Ver progreso</Link>
+              <h2 className="font-bold text-[#f8fafc]">Plan semanal</h2>
+              <Link href="/history" className="text-xs font-semibold text-[#5eead4] hover:underline">Ver progreso</Link>
             </div>
 
             <div className="space-y-3 pb-6">
@@ -213,22 +213,22 @@ export default async function DashboardPage() {
                   <Link
                     key={day.day}
                     href={`/day/${day.day}`}
-                    className="flex items-center gap-4 bg-[#211b16] rounded-3xl card-shadow card-hover p-4 active:scale-[0.98] anim-rise"
+                    className="flex items-center gap-4 glass rounded-3xl card-shadow card-hover p-4 active:scale-[0.98] anim-rise"
                     style={{ animationDelay: `${0.15 + idx * 0.05}s` }}
                   >
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
-                      done ? "bg-[#f97316] text-white" : "bg-[#262019] text-[#f97316]"
+                      done ? "bg-[#2dd4bf] text-[#04211c]" : "bg-white/5 text-[#2dd4bf]"
                     }`}>
                       {done ? "✓" : day.day}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-[15px] text-[#f2ede9]">{day.title}</p>
-                      <p className="text-xs text-[#a1968e] mt-0.5">
+                      <p className="font-semibold text-[15px] text-[#f8fafc]">{day.title}</p>
+                      <p className="text-xs text-[#9aa7b2] mt-0.5">
                         {day.exercises.length} ejercicios
                         {last && ` · ${new Date(last).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" })}`}
                       </p>
                     </div>
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#4a403a] flex-shrink-0">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#3a4652] flex-shrink-0">
                       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
                     </svg>
                   </Link>

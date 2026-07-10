@@ -12,10 +12,10 @@ export default function BottomNav() {
   const isProfile = pathname === "/profile";
 
   const item = (active: boolean) =>
-    `flex flex-col items-center gap-1 ${active ? "text-[#f97316]" : "text-[#6f645b]"}`;
+    `flex flex-col items-center gap-1 ${active ? "text-[#2dd4bf]" : "text-[#5d6a75]"}`;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-around px-6 pt-3 pb-4 bg-[#191411]/90 backdrop-blur-xl border-t border-[#2e2721]">
+    <nav className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-around px-6 pt-3 pb-4 bg-[#0a0f14]/70 backdrop-blur-xl border-t border-white/10">
       <Link href="/" className={item(isHome)}>
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>

@@ -39,7 +39,7 @@ export default async function PublicProfilePage({
   return (
     <main className="flex-1 max-w-lg md:max-w-2xl w-full mx-auto">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-b-[32px] px-5 pt-12 pb-8 text-center" style={{ background: "linear-gradient(160deg, #1c1613 0%, #241a14 60%, #3a2315 100%)" }}>
+      <div className="relative overflow-hidden rounded-b-[32px] glass px-5 pt-12 pb-8 text-center" style={{ background: "linear-gradient(160deg, rgba(45,212,191,0.16) 0%, rgba(10,15,20,0.5) 55%, rgba(94,234,212,0.08) 100%)" }}>
         <div className="flex justify-start mb-4">
           <Link href={user ? "/" : "/login"} className="w-9 h-9 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
@@ -81,13 +81,13 @@ export default async function PublicProfilePage({
 
       {/* Stats cards */}
       <div className="px-5 pt-5 grid grid-cols-2 gap-3">
-        <div className="bg-[#211b16] rounded-3xl card-shadow p-4 text-center">
-          <p className="text-3xl font-bold text-[#f97316]">{stats.sessions}</p>
-          <p className="text-xs text-[#8a7f76] mt-1">Entrenamientos</p>
+        <div className="glass rounded-3xl card-shadow p-4 text-center">
+          <p className="text-3xl font-bold text-[#2dd4bf]">{stats.sessions}</p>
+          <p className="text-xs text-[#7d8a95] mt-1">Entrenamientos</p>
         </div>
-        <div className="bg-[#211b16] rounded-3xl card-shadow p-4 text-center">
-          <p className="text-3xl font-bold text-[#f97316]">{stats.minutes}</p>
-          <p className="text-xs text-[#8a7f76] mt-1">Minutos totales</p>
+        <div className="glass rounded-3xl card-shadow p-4 text-center">
+          <p className="text-3xl font-bold text-[#2dd4bf]">{stats.minutes}</p>
+          <p className="text-xs text-[#7d8a95] mt-1">Minutos totales</p>
         </div>
       </div>
 
@@ -96,16 +96,16 @@ export default async function PublicProfilePage({
         <div className="px-5 pt-4 pb-8">
           <Link
             href={`/r/${routine.share_code}`}
-            className="flex items-center gap-4 bg-[#211b16] rounded-3xl card-shadow p-4 active:scale-[0.98] transition-transform"
+            className="flex items-center gap-4 glass rounded-3xl card-shadow p-4 active:scale-[0.98] transition-transform"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#262019] flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">
               📋
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-[#f2ede9]">{routine.title}</p>
-              <p className="text-xs text-[#a1968e]">Ver rutina{isOwn ? "" : " y copiarla"}</p>
+              <p className="font-semibold text-[#f8fafc]">{routine.title}</p>
+              <p className="text-xs text-[#9aa7b2]">Ver rutina{isOwn ? "" : " y copiarla"}</p>
             </div>
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#4a403a]">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#3a4652]">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
             </svg>
           </Link>
