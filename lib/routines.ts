@@ -4,6 +4,7 @@ export type Exercise = {
   reps: string;
   image: string;
   tip: string;
+  video?: string;
 };
 
 export type RoutineDay = {

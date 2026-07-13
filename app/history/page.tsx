@@ -4,16 +4,19 @@ import HistoryView from "@/components/HistoryView";
 
 export default async function HistoryPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   const { data: sessions } = await supabase
     .from("workout_sessions")
     .select("id, day_number, day_title, started_at, completed_at, duration_minutes")
+    .eq("user_id", user?.id ?? "")
     .order("started_at", { ascending: false })
     .limit(30);
 
   const { data: logs } = await supabase
     .from("workout_logs")
     .select("exercise_name, weight_kg, reps_done, created_at")
+    .eq("user_id", user?.id ?? "")
     .order("created_at", { ascending: true });
 
   return (

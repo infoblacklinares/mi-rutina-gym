@@ -8,6 +8,12 @@ import type { RoutineDay } from "@/lib/routines";
 import type { LastSetData } from "@/app/day/[dayNumber]/page";
 import SharePRButton, { type PR } from "@/components/SharePRButton";
 
+function toYouTubeEmbed(url: string): string {
+  const id =
+    url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/)?.[1] ?? "";
+  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
+}
+
 export default function WorkoutRunner({
   day,
   userId,
@@ -230,10 +236,29 @@ export default function WorkoutRunner({
             </div>
           </div>
 
-          {/* Imagen expandida a todo el ancho */}
+          {/* Video o imagen expandidos a todo el ancho */}
           {expanded === i && (
             <div className="px-2 pb-3 anim-rise">
-              {ex.image ? (
+              {ex.video ? (
+                /youtube\.com|youtu\.be/.test(ex.video) ? (
+                  <iframe
+                    src={toYouTubeEmbed(ex.video)}
+                    className="w-full aspect-video rounded-2xl"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={ex.video}
+                    className="w-full rounded-2xl"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                  />
+                )
+              ) : ex.image ? (
                 <Image
                   src={ex.image}
                   alt={ex.name}

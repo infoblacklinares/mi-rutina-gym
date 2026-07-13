@@ -20,7 +20,7 @@ type ExerciseRow = {
   order_index: number;
   exercise_id: string | null;
 };
-type LibraryRow = { id: string; image: string; tip: string };
+type LibraryRow = { id: string; image: string; tip: string; video: string };
 
 function buildDays(
   dayRows: DayRow[],
@@ -51,6 +51,7 @@ function buildDays(
             // La librería global tiene prioridad: una imagen/tip sirve para todos
             image: lib?.image || localImage,
             tip: lib?.tip || e.tip,
+            video: lib?.video || "",
           };
         }),
     }));
@@ -76,7 +77,7 @@ async function fetchRoutineContent(supabase: SupabaseClient, routineId: string) 
   const { data: libraryRows } = libraryIds.length
     ? await supabase
         .from("exercise_library")
-        .select("id, image, tip")
+        .select("id, image, tip, video")
         .in("id", libraryIds)
     : { data: [] };
   const library = new Map((libraryRows ?? []).map((l) => [l.id, l]));
