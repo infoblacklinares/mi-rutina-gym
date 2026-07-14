@@ -236,10 +236,10 @@ export default function WorkoutRunner({
             </div>
           </div>
 
-          {/* Video o imagen expandidos a todo el ancho */}
+          {/* Video + imagen expandidos (el video primero, mayor impacto) */}
           {expanded === i && (
-            <div className="px-2 pb-3 anim-rise">
-              {ex.video ? (
+            <div className="px-2 pb-3 anim-rise space-y-2">
+              {ex.video && (
                 /youtube\.com|youtu\.be/.test(ex.video) ? (
                   <iframe
                     src={toYouTubeEmbed(ex.video)}
@@ -258,7 +258,8 @@ export default function WorkoutRunner({
                     controls
                   />
                 )
-              ) : ex.image ? (
+              )}
+              {ex.image && (
                 <Image
                   src={ex.image}
                   alt={ex.name}
@@ -267,10 +268,11 @@ export default function WorkoutRunner({
                   className="w-full h-auto rounded-2xl"
                   unoptimized
                 />
-              ) : (
+              )}
+              {!ex.video && !ex.image && (
                 <div className="w-full aspect-video rounded-2xl bg-white/5 flex flex-col items-center justify-center gap-1 text-[#5d6a75]">
                   <span className="text-4xl">🏋️</span>
-                  <span className="text-xs font-medium">Imagen próximamente</span>
+                  <span className="text-xs font-medium">Contenido próximamente</span>
                 </div>
               )}
             </div>
