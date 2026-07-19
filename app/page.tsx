@@ -51,14 +51,23 @@ export default async function DashboardPage() {
     .order("started_at", { ascending: false })
     .limit(60);
 
+  // Lunes de la semana actual (en horario local GMT-4)
+  const now = localNow();
+  const weekStartLocal = new Date(now);
+  weekStartLocal.setUTCDate(now.getUTCDate() - ((now.getUTCDay() + 6) % 7));
+  weekStartLocal.setUTCHours(0, 0, 0, 0);
+  const weekStartMs = weekStartLocal.getTime() - TZ_OFFSET_HOURS * 3600 * 1000;
+
   const lastByDay = new Map<number, string>();
-  const completedDays = new Set<number>();
+  const completedDays = new Set<number>(); // solo la semana actual: se reinicia cada lunes
   const trainedDates = new Set<string>();
   let totalMinutes = 0;
   for (const s of sessions ?? []) {
     if (!lastByDay.has(s.day_number)) lastByDay.set(s.day_number, s.started_at);
     if (s.completed_at) {
-      completedDays.add(s.day_number);
+      if (new Date(s.started_at).getTime() >= weekStartMs) {
+        completedDays.add(s.day_number);
+      }
       trainedDates.add(new Date(s.started_at).toISOString().slice(0, 10));
     }
     totalMinutes += s.duration_minutes ?? 0;

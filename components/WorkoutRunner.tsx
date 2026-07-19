@@ -48,6 +48,29 @@ export default function WorkoutRunner({
     })
   );
 
+  // ─── Borrador automático: lo que escribís queda guardado en el dispositivo ───
+  const draftKey = `mirutina-draft-${userId}-${day.day}`;
+  const draftLoaded = useRef(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const draft: string[] = JSON.parse(raw);
+        setWeights((prev) => prev.map((w, i) => draft[i] || w));
+      }
+    } catch {}
+    draftLoaded.current = true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!draftLoaded.current) return;
+    try {
+      localStorage.setItem(draftKey, JSON.stringify(weights));
+    } catch {}
+  }, [weights, draftKey]);
+
   // ─── Cronómetro de descanso ───
   const [chronoRunning, setChronoRunning] = useState(false);
   const [chronoSeconds, setChronoSeconds] = useState(0);
@@ -113,6 +136,8 @@ export default function WorkoutRunner({
     });
     newPrs.sort((a, b) => (b.weight - (b.prev ?? 0)) - (a.weight - (a.prev ?? 0)));
     setPrs(newPrs);
+
+    try { localStorage.removeItem(draftKey); } catch {}
 
     setSaving(false);
     setSaved(true);
