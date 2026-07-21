@@ -261,29 +261,36 @@ export default function WorkoutRunner({
             </div>
           </div>
 
-          {/* Video + imagen expandidos (el video primero, mayor impacto) */}
+          {/* Video(s) + imagen expandidos (el video primero, mayor impacto) */}
           {expanded === i && (
             <div className="px-2 pb-3 anim-rise space-y-2">
-              {ex.video && (
-                /youtube\.com|youtu\.be/.test(ex.video) ? (
-                  <iframe
-                    src={toYouTubeEmbed(ex.video)}
-                    className="w-full aspect-video rounded-2xl"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video
-                    src={ex.video}
-                    className="w-full rounded-2xl"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    controls
-                  />
-                )
-              )}
+              {ex.video &&
+                ex.video
+                  .split(",")
+                  .map((u) => u.trim())
+                  .filter(Boolean)
+                  .map((url, vi) =>
+                    /youtube\.com|youtu\.be/.test(url) ? (
+                      <iframe
+                        key={vi}
+                        src={toYouTubeEmbed(url)}
+                        className="w-full aspect-video rounded-2xl"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <video
+                        key={vi}
+                        src={url}
+                        className="w-full rounded-2xl"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                      />
+                    )
+                  )}
               {ex.image && (
                 <Image
                   src={ex.image}
